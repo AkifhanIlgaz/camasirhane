@@ -86,6 +86,7 @@ export default defineConfig([globalIgnores([
     files: ["**/*.ts", "**/*.tsx"],
 
     rules: {
+        "jsx-a11y/aria-role": ["error", { ignoreNonDOM: true }],
         "no-console": "warn",
         "react/prop-types": "off",
         "react/jsx-uses-react": "off",

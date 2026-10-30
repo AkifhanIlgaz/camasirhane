@@ -1,0 +1,168 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function hasRole(role) {
+      return signedIn()
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == role;
+    }
+
+    function changedKeysOnly(keys) {
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly(keys);
+    }
+
+    function pricing() {
+      return get(/databases/$(database)/documents/settings/pricing).data;
+    }
+
+    // Kullanıcılar: hesaplar Firebase konsolundan elle açılır/silinir.
+    match /users/{uid} {
+      allow read: if signedIn() && (request.auth.uid == uid || hasRole('muhasebeci'));
+
+      // Muhasebeci talebe ve çamaşırcı dokümanı açıp silebilir (hesap yönetimi).
+      allow create: if hasRole('muhasebeci')
+        && request.resource.data.role in ['talebe', 'camasirci']
+        && (
+          (
+            request.resource.data.role == 'talebe'
+            && request.resource.data.keys().hasOnly(['role', 'username', 'studentNo', 'balance'])
+            && request.resource.data.studentNo is string
+            && request.resource.data.balance == 0
+          )
+          || (
+            request.resource.data.role == 'camasirci'
+            && request.resource.data.keys().hasOnly(['role', 'username'])
+          )
+        )
+        && request.resource.data.username is string;
+      allow delete: if hasRole('muhasebeci') && resource.data.role in ['talebe', 'camasirci'];
+
+      // Muhasebeci bakiyeyi değiştirebilir; talebe yalnızca kendi bakiyesini azaltabilir
+      // (yıkama isteği oluştururken, bkz. requests).
+      allow update: if changedKeysOnly(['balance'])
+        && request.resource.data.balance is number
+        && (
+          hasRole('muhasebeci')
+          || (
+            hasRole('talebe')
+            && request.auth.uid == uid
+            && request.resource.data.balance < resource.data.balance
+            && request.resource.data.balance >= 0
+          )
+        );
+    }
+
+    // Fiyat ve istek seçenekleri: herkes okur, sadece muhasebeci yazar.
+    match /settings/{docId} {
+      allow read: if signedIn();
+      allow write: if hasRole('muhasebeci');
+    }
+
+    // Makineleri muhasebeci ekler/siler; çamaşırcı sadece doluluk durumunu (requestId) günceller.
+    match /machines/{machineId} {
+      allow read: if hasRole('camasirci') || hasRole('muhasebeci');
+      allow create: if hasRole('muhasebeci')
+        && request.resource.data.keys().hasOnly(['name', 'type', 'requestId'])
+        && request.resource.data.name is string
+        && request.resource.data.type in ['camasir', 'kurutma']
+        && request.resource.data.requestId == null;
+      allow delete: if hasRole('muhasebeci') && resource.data.requestId == null;
+      allow update: if hasRole('camasirci') && changedKeysOnly(['requestId']);
+    }
+
+    match /requests/{requestId} {
+      allow read: if signedIn() && (
+        resource.data.uid == request.auth.uid
+        || hasRole('camasirci')
+        || hasRole('muhasebeci')
+      );
+
+      // Talebe istek oluştururken aynı batch'te bakiyesi düşer ve `transactions/{requestId}` yazılır.
+      allow create: if hasRole('talebe') && validNewRequest(requestId);
+
+      // Çamaşırcı yalnızca durum, makine ve başlama zamanını günceller.
+      allow update: if hasRole('camasirci')
+        && changedKeysOnly(['status', 'machineId', 'startedAt'])
+        && request.resource.data.status in ['bekliyor', 'yikaniyor', 'kurutuluyor', 'bitti', 'teslim'];
+    }
+
+    function validNewRequest(requestId) {
+      let d = request.resource.data;
+      let me = get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+      let price = pricing().washPrice + (d.dry == true ? pricing().dryPrice : 0);
+      let txPath = /databases/$(database)/documents/transactions/$(requestId);
+      let mePath = /databases/$(database)/documents/users/$(request.auth.uid);
+
+      return d.keys().hasOnly([
+          'uid', 'studentNo', 'program', 'temperature', 'spin', 'softener', 'dry',
+          'dryProgram', 'price', 'status', 'machineId', 'startedAt', 'createdAt'
+        ])
+        && d.keys().hasAll([
+          'uid', 'studentNo', 'program', 'temperature', 'spin', 'softener', 'dry',
+          'dryProgram', 'price', 'status', 'machineId', 'startedAt', 'createdAt'
+        ])
+        && d.uid == request.auth.uid
+        && d.studentNo == me.studentNo
+        && d.program is string
+        && d.temperature is number
+        && d.spin is number
+        && d.softener is bool
+        && d.dry is bool
+        && (d.dry ? d.dryProgram is string : d.dryProgram == null)
+        && d.price == price
+        && d.status == 'bekliyor'
+        && d.machineId == null
+        && d.startedAt == null
+        && d.createdAt == request.time
+        && me.balance >= price
+        && getAfter(mePath).data.balance == me.balance - price
+        && existsAfter(txPath)
+        && getAfter(txPath).data.amount == -price;
+    }
+
+    // Bakiye hareketleri: oluşturulabilir, değiştirilemez ve silinemez.
+    match /transactions/{txId} {
+      allow read: if signedIn() && (
+        resource.data.uid == request.auth.uid || hasRole('muhasebeci')
+      );
+
+      allow create: if
+        // Muhasebeci bakiye yükler.
+        (
+          hasRole('muhasebeci')
+          && request.resource.data.keys().hasOnly(['uid', 'studentNo', 'amount', 'type', 'by', 'createdAt'])
+          && request.resource.data.type == 'yukleme'
+          && request.resource.data.amount is number
+          && request.resource.data.amount > 0
+          && request.resource.data.by == request.auth.uid
+          && request.resource.data.createdAt == request.time
+          && get(/databases/$(database)/documents/users/$(request.resource.data.uid)).data.studentNo
+               == request.resource.data.studentNo
+          && getAfter(/databases/$(database)/documents/users/$(request.resource.data.uid)).data.balance
+               == get(/databases/$(database)/documents/users/$(request.resource.data.uid)).data.balance
+                  + request.resource.data.amount
+        )
+        // Talebe yıkama isteği oluştururken ücreti düşer (id = istek id'si).
+        || (
+          hasRole('talebe')
+          && request.resource.data.keys().hasOnly(['uid', 'studentNo', 'amount', 'type', 'by', 'requestId', 'createdAt'])
+          && request.resource.data.type == 'yikama'
+          && request.resource.data.uid == request.auth.uid
+          && request.resource.data.by == request.auth.uid
+          && request.resource.data.requestId == txId
+          && request.resource.data.studentNo
+               == get(/databases/$(database)/documents/users/$(request.auth.uid)).data.studentNo
+          && request.resource.data.createdAt == request.time
+          && existsAfter(/databases/$(database)/documents/requests/$(txId))
+          && getAfter(/databases/$(database)/documents/requests/$(txId)).data.price
+               == -request.resource.data.amount
+        );
+    }
+  }
+}
