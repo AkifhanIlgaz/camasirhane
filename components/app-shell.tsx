@@ -61,8 +61,8 @@ export function AppShell({
   }
 
   return (
-    <div className="mx-auto flex min-h-dvh w-full max-w-xl flex-col pb-[env(safe-area-inset-bottom)]">
-      <header className="sticky top-0 z-40 flex h-14 items-center justify-between border-b border-separator bg-background/70 px-4 backdrop-blur-lg">
+    <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col">
+      <header className="sticky top-0 z-40 flex h-[calc(3.5rem+env(safe-area-inset-top))] items-center justify-between border-b border-separator bg-background/70 px-4 pt-[env(safe-area-inset-top)] backdrop-blur-lg">
         <div className="flex items-center gap-2">
           <Logo />
           <div className="leading-tight">
@@ -77,7 +77,9 @@ export function AppShell({
           </Button>
         </div>
       </header>
-      <main className="flex-1 px-4 py-4">{children}</main>
+      <main className="flex-1 px-4 pt-4 pb-[calc(5rem+env(safe-area-inset-bottom))]">
+        {children}
+      </main>
     </div>
   );
 }

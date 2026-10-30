@@ -2,7 +2,14 @@
 
 import { type FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button, Card, FieldError, Input, Label, TextField } from "@heroui/react";
+import {
+  Button,
+  Card,
+  FieldError,
+  Input,
+  Label,
+  TextField,
+} from "@heroui/react";
 
 import { useAuth } from "@/lib/auth-context";
 import { roleHome } from "@/lib/roles";
@@ -43,7 +50,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-dvh flex-col items-center justify-center gap-6 px-4">
+    <div className="flex min-h-dvh flex-col items-center justify-center gap-6 px-4 pt-[env(safe-area-inset-top)] pb-[calc(5rem+env(safe-area-inset-bottom))]">
       <div className="flex flex-col items-center gap-2 text-center">
         <Logo size={40} />
         <h1 className="text-2xl font-bold">Çamaşırhane</h1>

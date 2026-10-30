@@ -7,3 +7,20 @@
 	--font-sans: "font", sans-serif;
 	--font-mono: "monospace", monospace;
 }
+
+html {
+	-webkit-text-size-adjust: 100%;
+	-webkit-tap-highlight-color: transparent;
+}
+
+body {
+	touch-action: manipulation;
+	overscroll-behavior-y: none;
+}
+
+/* iOS Safari, 16px altındaki alanlara odaklanınca sayfayı yakınlaştırır. */
+input,
+textarea,
+select {
+	font-size: max(16px, 1em);
+}
