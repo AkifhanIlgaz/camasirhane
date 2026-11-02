@@ -67,6 +67,16 @@ export interface WashRequest {
   machineId: string | null;
   startedAt: { toDate: () => Date } | null;
   createdAt: { toDate: () => Date } | null;
+  /** Fotoğraf `requestImages/{id}` içinde; 10 gün sonra silinir. */
+  hasImage?: boolean;
+}
+
+/** `requestImages/{requestId}` — sadece talebe ve çamaşırcı okur. */
+export interface RequestImage {
+  uid: string;
+  /** `data:image/jpeg;base64,...` */
+  image: string;
+  expireAt: { toDate: () => Date };
 }
 
 /** `machines/{id}` — makineyi muhasebeci ekler. */

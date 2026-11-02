@@ -5,6 +5,7 @@ import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { Card, Chip, Spinner, Tabs } from "@heroui/react";
 import clsx from "clsx";
 
+import { RequestPhoto } from "@/components/request-photo";
 import { db } from "@/lib/firebase";
 import { useAuth } from "@/lib/auth-context";
 import { formatDateTime, formatMoney } from "@/lib/format";
@@ -87,6 +88,7 @@ function Requests() {
                   </Chip>
                 )}
               </div>
+              {r.hasImage && <RequestPhoto requestId={r.id} />}
               <div className="flex items-baseline justify-between gap-3">
                 <p className="text-xs text-muted">
                   {r.createdAt ? formatDateTime(r.createdAt.toDate()) : ""}

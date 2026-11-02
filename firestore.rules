@@ -101,12 +101,14 @@ service cloud.firestore {
 
       return d.keys().hasOnly([
           'uid', 'studentNo', 'program', 'temperature', 'spin', 'softener', 'dry',
-          'dryProgram', 'price', 'status', 'machineId', 'startedAt', 'createdAt'
+          'dryProgram', 'price', 'status', 'machineId', 'startedAt', 'createdAt', 'hasImage'
         ])
         && d.keys().hasAll([
           'uid', 'studentNo', 'program', 'temperature', 'spin', 'softener', 'dry',
-          'dryProgram', 'price', 'status', 'machineId', 'startedAt', 'createdAt'
+          'dryProgram', 'price', 'status', 'machineId', 'startedAt', 'createdAt', 'hasImage'
         ])
+        && d.hasImage == true
+        && (existsAfter(/databases/$(database)/documents/requestImages/$(requestId)))
         && d.uid == request.auth.uid
         && d.studentNo == me.studentNo
         && d.program is string
@@ -124,6 +126,29 @@ service cloud.firestore {
         && getAfter(mePath).data.balance == me.balance - price
         && existsAfter(txPath)
         && getAfter(txPath).data.amount == -price;
+    }
+
+    // İstek fotoğrafı: sadece talebe (sahibi) ve çamaşırcı görür. Değiştirilemez;
+    // süresi (`expireAt`, 10 gün) dolunca çamaşırcı paneli açıldığında silinir.
+    match /requestImages/{requestId} {
+      allow read: if signedIn() && (
+        resource.data.uid == request.auth.uid || hasRole('camasirci')
+      );
+
+      allow create: if hasRole('talebe')
+        && request.resource.data.keys().hasOnly(['uid', 'image', 'createdAt', 'expireAt'])
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.image is string
+        && request.resource.data.image.matches('data:image/jpeg;base64,.*')
+        && request.resource.data.image.size() <= 320000
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.expireAt is timestamp
+        && request.resource.data.expireAt <= request.time + duration.value(10, 'd') + duration.value(1, 'h')
+        && request.resource.data.expireAt >= request.time + duration.value(10, 'd') - duration.value(1, 'h')
+        && existsAfter(/databases/$(database)/documents/requests/$(requestId))
+        && getAfter(/databases/$(database)/documents/requests/$(requestId)).data.uid == request.auth.uid;
+
+      allow delete: if hasRole('camasirci') && resource.data.expireAt <= request.time;
     }
 
     // Bakiye hareketleri: oluşturulabilir, değiştirilemez ve silinemez.

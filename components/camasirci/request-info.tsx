@@ -1,3 +1,4 @@
+import { RequestPhoto } from "@/components/request-photo";
 import type { WashRequest } from "@/types";
 
 /** Çamaşırcının bir isteği tanıması için özet satırları. */
@@ -15,6 +16,11 @@ export function RequestInfo({ request }: { request: WashRequest }) {
             .join(" · ")}
           {request.dryProgram ? ` (${request.dryProgram})` : ""}
         </p>
+      )}
+      {request.hasImage && (
+        <div className="mt-2">
+          <RequestPhoto requestId={request.id} />
+        </div>
       )}
     </div>
   );

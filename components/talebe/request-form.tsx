@@ -1,8 +1,9 @@
 "use client";
 
-import { type FormEvent, useState } from "react";
+import { type FormEvent, useRef, useState } from "react";
 import {
   collection,
+  Timestamp,
   doc,
   serverTimestamp,
   writeBatch,
@@ -25,6 +26,9 @@ import { db } from "@/lib/firebase";
 import { useAuth } from "@/lib/auth-context";
 import { useSettings } from "@/lib/settings";
 import { formatMoney } from "@/lib/format";
+import { compressImage } from "@/lib/image";
+
+const IMAGE_TTL_MS = 10 * 24 * 60 * 60 * 1000;
 
 function OptionSelect({
   label,
@@ -68,6 +72,8 @@ export function RequestForm() {
   const [dryProgram, setDryProgram] = useState<Key | null>(null);
   const [softener, setSoftener] = useState(false);
   const [dry, setDry] = useState(false);
+  const [photo, setPhoto] = useState<string | null>(null);
+  const fileInput = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string | null>(null);
   const modal = useOverlayState();
   const [submitting, setSubmitting] = useState(false);
@@ -87,11 +93,12 @@ export function RequestForm() {
     program !== null &&
     temperature !== null &&
     spin !== null &&
+    photo !== null &&
     (!dry || dryProgram !== null);
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!complete || insufficient) return;
+    if (!complete || insufficient || !photo) return;
 
     setError(null);
     setSubmitting(true);
@@ -113,6 +120,14 @@ export function RequestForm() {
         machineId: null,
         startedAt: null,
         createdAt: serverTimestamp(),
+        hasImage: true,
+      });
+      batch.set(doc(db, "requestImages", requestRef.id), {
+        uid: user.uid,
+        image: photo,
+        createdAt: serverTimestamp(),
+        // Çamaşırcı paneli süresi dolan fotoğrafı siler.
+        expireAt: Timestamp.fromMillis(Date.now() + IMAGE_TTL_MS),
       });
       batch.update(doc(db, "users", user.uid), { balance: balance - price });
       batch.set(doc(db, "transactions", requestRef.id), {
@@ -132,6 +147,7 @@ export function RequestForm() {
       setSoftener(false);
       setDry(false);
       setDryProgram(null);
+      setPhoto(null);
       modal.close();
       toast.success("İsteğiniz alındı.");
     } catch {
@@ -224,6 +240,83 @@ export function RequestForm() {
                     onChange={setDryProgram}
                   />
                 )}
+
+                <div className="flex flex-col gap-2">
+                  <Label>Çamaşır fotoğrafı</Label>
+                  <input
+                    ref={fileInput}
+                    accept="image/*"
+                    className="sr-only"
+                    type="file"
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      e.target.value = "";
+                      if (!file) return;
+                      try {
+                        setPhoto(await compressImage(file));
+                        setError(null);
+                      } catch (err) {
+                        setError(
+                          err instanceof Error && err.message
+                            ? err.message
+                            : "Fotoğraf okunamadı, başka bir fotoğraf deneyin.",
+                        );
+                      }
+                    }}
+                  />
+                  {photo ? (
+                    <div className="relative overflow-hidden rounded-2xl">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        alt="Seçilen fotoğraf"
+                        className="h-44 w-full object-cover"
+                        src={photo}
+                      />
+                      <div className="absolute inset-x-0 bottom-0 flex justify-end gap-2 bg-gradient-to-t from-black/60 to-transparent p-3">
+                        <Button
+                          size="sm"
+                          type="button"
+                          variant="secondary"
+                          onPress={() => fileInput.current?.click()}
+                        >
+                          Değiştir
+                        </Button>
+                        <Button
+                          size="sm"
+                          type="button"
+                          variant="danger-soft"
+                          onPress={() => setPhoto(null)}
+                        >
+                          Kaldır
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <button
+                      className="flex h-36 w-full flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-border bg-surface-secondary/50 px-4 text-center transition-colors hover:bg-surface-secondary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+                      type="button"
+                      onClick={() => fileInput.current?.click()}
+                    >
+                      <svg
+                        aria-hidden
+                        className="size-8 text-muted"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={1.6}
+                        viewBox="0 0 24 24"
+                      >
+                        <path d="M4 8a2 2 0 0 1 2-2h1.5l1-1.5h7l1 1.5H18a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z" />
+                        <circle cx="12" cy="12.5" r="3.5" />
+                      </svg>
+                      <span className="text-sm font-medium">Fotoğraf çek veya seç</span>
+                      <span className="text-xs text-muted">
+                        Sadece çamaşırcı görür, 10 gün sonra silinir.
+                      </span>
+                    </button>
+                  )}
+                </div>
 
                 <div className="flex items-center justify-between rounded-xl bg-surface-secondary px-4 py-3">
                   <span className="text-sm text-muted">Toplam</span>

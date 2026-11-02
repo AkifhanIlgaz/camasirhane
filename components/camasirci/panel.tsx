@@ -1,14 +1,38 @@
 "use client";
 
+import { useEffect } from "react";
+import {
+  collection,
+  deleteDoc,
+  getDocs,
+  limit,
+  query,
+  Timestamp,
+  where,
+} from "firebase/firestore";
 import { Spinner, Tabs } from "@heroui/react";
 
 import { DeliveryTab } from "@/components/camasirci/delivery-tab";
 import { MachinesTab } from "@/components/camasirci/machines-tab";
 import { QueueTab } from "@/components/camasirci/queue-tab";
+import { db } from "@/lib/firebase";
 import { useLaundry } from "@/lib/use-laundry";
 
 export function CamasirciPanel() {
   const { machines, requests } = useLaundry();
+
+  // Süresi (10 gün) dolan istek fotoğraflarını siler.
+  useEffect(() => {
+    getDocs(
+      query(
+        collection(db, "requestImages"),
+        where("expireAt", "<=", Timestamp.now()),
+        limit(50),
+      ),
+    )
+      .then((snap) => Promise.all(snap.docs.map((d) => deleteDoc(d.ref))))
+      .catch(() => {});
+  }, []);
 
   if (machines === null || requests === null) {
     return (
