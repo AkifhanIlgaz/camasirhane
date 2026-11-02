@@ -22,21 +22,6 @@ export interface PricingSettings {
   dryPrice: number;
 }
 
-export interface WashProgram {
-  name: string;
-  /** Tahmini süre (dakika); sadece çamaşırcıya gösterilir. */
-  minutes: number;
-}
-
-/** `settings/options` — istek formundaki seçenekler. */
-export interface OptionsSettings {
-  programs: WashProgram[];
-  /** Kurutma programları; süre, kurutma makinesinde tahmini bitiş için kullanılır. */
-  dryPrograms: WashProgram[];
-  temperatures: number[];
-  spins: number[];
-}
-
 /** `transactions/{id}` */
 export interface Transaction {
   id: string;
@@ -56,6 +41,7 @@ export interface WashRequest {
   id: string;
   uid: string;
   studentNo: string;
+  /** Program id'si (`lib/programs.ts`); eski kayıtlarda Türkçe program adı. */
   program: string;
   temperature: number;
   spin: number;
@@ -77,8 +63,10 @@ export interface WashRequest {
 /** `requestImages/{requestId}` — sadece talebe ve çamaşırcı okur. */
 export interface RequestImage {
   uid: string;
-  /** `data:image/jpeg;base64,...` */
-  image: string;
+  /** Storage yolu: `requestImages/{uid}/{requestId}.jpg` */
+  path?: string;
+  /** Eski kayıtlar: `data:image/jpeg;base64,...` */
+  image?: string;
   expireAt: { toDate: () => Date };
 }
 

@@ -19,7 +19,7 @@ import {
 
 import { db } from "@/lib/firebase";
 import { formatTime } from "@/lib/format";
-import { useSettings } from "@/lib/settings";
+import { programMinutes, programName } from "@/lib/programs";
 import { RequestInfo } from "@/components/camasirci/request-info";
 import type { Machine, WashRequest } from "@/types";
 
@@ -43,7 +43,6 @@ export function MachinesTab({
   machines: Machine[];
   requests: WashRequest[];
 }) {
-  const { options } = useSettings();
   const now = useNow();
   const [washed, setWashed] = useState<{
     machine: Machine;
@@ -100,9 +99,9 @@ export function MachinesTab({
   };
 
   const estimate = (request: WashRequest, isDryer: boolean) => {
-    const list = isDryer ? options.dryPrograms : options.programs;
-    const name = isDryer ? request.dryProgram : request.program;
-    const minutes = list.find((p) => p.name === name)?.minutes;
+    const minutes = isDryer
+      ? programMinutes("dry", request.dryProgram)
+      : programMinutes("wash", request.program);
 
     if (!request.startedAt || !minutes) return null;
 
@@ -219,7 +218,7 @@ export function MachinesTab({
               <p className="mt-1 text-sm text-muted">
                 Talebe No: {washed?.request.studentNo}
                 {washed?.request.dryProgram
-                  ? ` · ${washed.request.dryProgram}`
+                  ? ` · ${programName("dry", washed.request.dryProgram)}`
                   : ""}
               </p>
             </Modal.Header>

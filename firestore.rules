@@ -137,11 +137,9 @@ service cloud.firestore {
       );
 
       allow create: if hasRole('talebe')
-        && request.resource.data.keys().hasOnly(['uid', 'image', 'createdAt', 'expireAt'])
+        && request.resource.data.keys().hasOnly(['uid', 'path', 'createdAt', 'expireAt'])
         && request.resource.data.uid == request.auth.uid
-        && request.resource.data.image is string
-        && request.resource.data.image.matches('data:image/jpeg;base64,.*')
-        && request.resource.data.image.size() <= 320000
+        && request.resource.data.path == 'requestImages/' + request.auth.uid + '/' + requestId + '.jpg'
         && request.resource.data.createdAt == request.time
         && request.resource.data.expireAt is timestamp
         && request.resource.data.expireAt <= request.time + duration.value(10, 'd') + duration.value(1, 'h')

@@ -27,11 +27,14 @@ import {
 } from "@heroui/react";
 
 import { useI18n } from "@/lib/i18n";
-import { db } from "@/lib/firebase";
+import { ref, uploadBytes } from "firebase/storage";
+
+import { db, storage } from "@/lib/firebase";
 import { useAuth } from "@/lib/auth-context";
 import { useSettings } from "@/lib/settings";
 import { formatMoney } from "@/lib/format";
 import { compressImage } from "@/lib/image";
+import { DRY_PROGRAMS, SPINS, TEMPERATURES, WASH_PROGRAMS } from "@/lib/programs";
 
 /** Bakiye bu kadar yıkamadan azsa "azalıyor" uyarısı gösterilir. */
 const LOW_BALANCE_WASHES = 2;
@@ -85,7 +88,7 @@ function OptionSelect({
 
 export function RequestForm() {
   const { user, profile } = useAuth();
-  const { pricing, options, loading } = useSettings();
+  const { pricing, loading } = useSettings();
   const { t, locale } = useI18n();
 
   const [program, setProgram] = useState<Key | null>(null);
@@ -94,7 +97,7 @@ export function RequestForm() {
   const [dryProgram, setDryProgram] = useState<Key | null>(null);
   const [softener, setSoftener] = useState(false);
   const [dry, setDry] = useState(false);
-  const [photo, setPhoto] = useState<string | null>(null);
+  const [photo, setPhoto] = useState<{ blob: Blob; url: string } | null>(null);
   const [note, setNote] = useState("");
   const fileInput = useRef<HTMLInputElement>(null);
   const warning = useOverlayState();
@@ -117,6 +120,10 @@ export function RequestForm() {
     warning.close();
     // Kullanıcı dokunuşu içinde çağrıldığı için kamera/dosya seçici açılabilir.
     fileInput.current?.click();
+  };
+  const removePhoto = () => {
+    if (photo) URL.revokeObjectURL(photo.url);
+    setPhoto(null);
   };
   const [error, setError] = useState<string | null>(null);
   const modal = useOverlayState();
@@ -148,6 +155,10 @@ export function RequestForm() {
     setSubmitting(true);
     try {
       const requestRef = doc(collection(db, "requests"));
+      const path = `requestImages/${user.uid}/${requestRef.id}.jpg`;
+      await uploadBytes(ref(storage, path), photo.blob, {
+        contentType: "image/jpeg",
+      });
       const batch = writeBatch(db);
 
       batch.set(requestRef, {
@@ -169,7 +180,7 @@ export function RequestForm() {
       });
       batch.set(doc(db, "requestImages", requestRef.id), {
         uid: user.uid,
-        image: photo,
+        path,
         createdAt: serverTimestamp(),
         // Çamaşırcı paneli süresi dolan fotoğrafı siler.
         expireAt: Timestamp.fromMillis(Date.now() + IMAGE_TTL_MS),
@@ -192,7 +203,7 @@ export function RequestForm() {
       setSoftener(false);
       setDry(false);
       setDryProgram(null);
-      setPhoto(null);
+      removePhoto();
       setNote("");
       modal.close();
       toast.success(t("form.success"));
@@ -251,13 +262,13 @@ export function RequestForm() {
             <form className="flex min-h-0 flex-1 flex-col" onSubmit={onSubmit}>
               <Modal.Body className="flex flex-col gap-4 p-6">
                 <OptionSelect
-                  items={options.programs.map((p) => ({ id: p.name, text: p.name }))}
+                  items={WASH_PROGRAMS.map((p) => ({ id: p.id, text: p.name[locale] }))}
                   label={t("form.program")}
                   value={program}
                   onChange={setProgram}
                 />
                 <OptionSelect
-                  items={options.temperatures.map((temp) => ({
+                  items={TEMPERATURES.map((temp) => ({
                     id: String(temp),
                     text: `${temp}°C`,
                   }))}
@@ -266,7 +277,7 @@ export function RequestForm() {
                   onChange={setTemperature}
                 />
                 <OptionSelect
-                  items={options.spins.map((s) => ({
+                  items={SPINS.map((s) => ({
                     id: String(s),
                     text: t("form.spinValue", { n: s }),
                   }))}
@@ -292,9 +303,9 @@ export function RequestForm() {
                 </Switch>
                 {dry && (
                   <OptionSelect
-                    items={options.dryPrograms.map((p) => ({
-                      id: p.name,
-                      text: p.name,
+                    items={DRY_PROGRAMS.map((p) => ({
+                      id: p.id,
+                      text: p.name[locale],
                     }))}
                     label={t("form.dryProgram")}
                     value={dryProgram}
@@ -315,7 +326,9 @@ export function RequestForm() {
                       e.target.value = "";
                       if (!file) return;
                       try {
-                        setPhoto(await compressImage(file));
+                        const blob = await compressImage(file);
+                        if (photo) URL.revokeObjectURL(photo.url);
+                        setPhoto({ blob, url: URL.createObjectURL(blob) });
                         setError(null);
                       } catch (err) {
                         const code = err instanceof Error ? err.message : "";
@@ -333,7 +346,7 @@ export function RequestForm() {
                       <img
                         alt={t("form.photoSelectedAlt")}
                         className="h-44 w-full object-cover"
-                        src={photo}
+                        src={photo.url}
                       />
                       <div className="absolute inset-x-0 bottom-0 flex justify-end gap-2 bg-gradient-to-t from-black/60 to-transparent p-3">
                         <Button
@@ -348,7 +361,7 @@ export function RequestForm() {
                           size="sm"
                           type="button"
                           variant="danger-soft"
-                          onPress={() => setPhoto(null)}
+                          onPress={removePhoto}
                         >
                           {t("form.photoRemove")}
                         </Button>

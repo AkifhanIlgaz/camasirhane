@@ -5,7 +5,9 @@ import { doc, getDoc } from "firebase/firestore";
 import { Modal, useOverlayState } from "@heroui/react";
 
 import { useI18n } from "@/lib/i18n";
-import { db } from "@/lib/firebase";
+import { getDownloadURL, ref } from "firebase/storage";
+
+import { db, storage } from "@/lib/firebase";
 import type { RequestImage } from "@/types";
 
 /** İstek fotoğrafı küçük resim olarak görünür, dokununca büyür. 10 gün sonra silinir. */
@@ -18,10 +20,15 @@ export function RequestPhoto({ requestId }: { requestId: string }) {
     let active = true;
 
     getDoc(doc(db, "requestImages", requestId))
-      .then((snap) => {
+      .then(async (snap) => {
         const data = snap.data() as RequestImage | undefined;
-        const expired = data && data.expireAt.toDate().getTime() < Date.now();
-        if (active) setImage(data && !expired ? data.image : null);
+        const expired = !data || data.expireAt.toDate().getTime() < Date.now();
+        const url = expired
+          ? null
+          : data.path
+            ? await getDownloadURL(ref(storage, data.path))
+            : (data.image ?? null);
+        if (active) setImage(url);
       })
       .catch(() => active && setImage(null));
 

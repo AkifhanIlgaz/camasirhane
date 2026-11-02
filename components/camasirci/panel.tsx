@@ -14,7 +14,9 @@ import { Spinner, Tabs } from "@heroui/react";
 
 import { MachinesTab } from "@/components/camasirci/machines-tab";
 import { QueueTab } from "@/components/camasirci/queue-tab";
-import { db } from "@/lib/firebase";
+import { deleteObject, ref } from "firebase/storage";
+
+import { db, storage } from "@/lib/firebase";
 import { useLaundry } from "@/lib/use-laundry";
 
 export function CamasirciPanel() {
@@ -29,7 +31,20 @@ export function CamasirciPanel() {
         limit(50),
       ),
     )
-      .then((snap) => Promise.all(snap.docs.map((d) => deleteDoc(d.ref))))
+      .then((snap) =>
+        Promise.all(
+          snap.docs.map(async (d) => {
+            const path = d.data().path as string | undefined;
+            if (path) {
+              // Dosya zaten yoksa (object-not-found) kaydı yine de sil.
+              await deleteObject(ref(storage, path)).catch((e) => {
+                if (e?.code !== "storage/object-not-found") throw e;
+              });
+            }
+            await deleteDoc(d.ref);
+          }),
+        ),
+      )
       .catch(() => {});
   }, []);
 

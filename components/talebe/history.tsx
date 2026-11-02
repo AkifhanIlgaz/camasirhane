@@ -10,6 +10,7 @@ import { db } from "@/lib/firebase";
 import { useAuth } from "@/lib/auth-context";
 import { useI18n } from "@/lib/i18n";
 import { formatDateTime, formatMoney } from "@/lib/format";
+import { programName } from "@/lib/programs";
 import { statusColor, statusKey } from "@/lib/status";
 import type { Transaction, WashRequest } from "@/types";
 
@@ -67,7 +68,7 @@ function Requests() {
           <Card>
             <Card.Content className="gap-3">
               <div className="flex items-center justify-between gap-3">
-                <p className="text-base font-semibold">{r.program}</p>
+                <p className="text-base font-semibold">{programName("wash", r.program, locale)}</p>
                 <Chip color={statusColor[r.status]} size="sm" variant="soft">
                   <Chip.Label>{t(statusKey[r.status])}</Chip.Label>
                 </Chip>
@@ -86,7 +87,11 @@ function Requests() {
                 )}
                 {r.dry && (
                   <Chip color="warning" size="sm" variant="soft">
-                    <Chip.Label>{t("hist.dry")}</Chip.Label>
+                    <Chip.Label>
+                      {r.dryProgram
+                        ? `${t("hist.dry")} · ${programName("dry", r.dryProgram, locale)}`
+                        : t("hist.dry")}
+                    </Chip.Label>
                   </Chip>
                 )}
               </div>

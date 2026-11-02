@@ -1,0 +1,25 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    function role() {
+      return firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.role;
+    }
+
+    // İstek fotoğrafı: sadece yükleyen talebe ve çamaşırcı görür. Değiştirilemez;
+    // süresi dolunca çamaşırcı paneli siler.
+    match /requestImages/{uid}/{file} {
+      allow read: if request.auth != null
+        && (request.auth.uid == uid || role() == 'camasirci');
+
+      allow create: if request.auth != null
+        && request.auth.uid == uid
+        && role() == 'talebe'
+        && file.matches('[A-Za-z0-9]+\\.jpg')
+        && request.resource.contentType == 'image/jpeg'
+        && request.resource.size <= 500 * 1024;
+
+      allow delete: if request.auth != null && role() == 'camasirci';
+    }
+  }
+}

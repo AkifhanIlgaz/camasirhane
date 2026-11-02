@@ -1,4 +1,4 @@
-// Varsayılan ayarları (settings/pricing, settings/options) yazar.
+// Varsayılan ayarları (settings/pricing) yazar.
 // Muhasebeci hesabıyla çalıştırın (rules gereği sadece muhasebeci yazabilir):
 //   SEED_USERNAME=kullanici SEED_PASSWORD=sifre node --env-file=.env.local scripts/seed.mjs
 import { initializeApp } from "firebase/app";
@@ -28,20 +28,6 @@ await signInWithEmailAndPassword(
 const db = getFirestore(app);
 
 await setDoc(doc(db, "settings", "pricing"), { washPrice: 50, dryPrice: 25 });
-await setDoc(doc(db, "settings", "options"), {
-  programs: [
-    { name: "Pamuklu", minutes: 60 },
-    { name: "Sentetik", minutes: 50 },
-    { name: "Hassas", minutes: 40 },
-    { name: "Hızlı yıkama", minutes: 30 },
-  ],
-  dryPrograms: [
-    { name: "Normal kurutma", minutes: 60 },
-    { name: "Hızlı kurutma", minutes: 30 },
-  ],
-  temperatures: [30, 40, 60, 90],
-  spins: [400, 800, 1000, 1200],
-});
 
 console.log("Ayarlar yazıldı.");
 process.exit(0);
