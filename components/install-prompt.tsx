@@ -1,10 +1,16 @@
 "use client";
 
+import type { MessageKey } from "@/lib/i18n";
+
 import { useEffect, useState } from "react";
-import { Alert, Button, CloseButton } from "@heroui/react";
+import { Alert, Button, CloseButton, toast } from "@heroui/react";
 
 import { useI18n } from "@/lib/i18n";
-import { isIOS, isStandalone } from "@/lib/pwa";
+import {
+  getInstallContext,
+  type InstallContext,
+  isStandalone,
+} from "@/lib/pwa";
 
 /** Chrome/Android'in kurulum olayı (standart tiplerde yok). */
 interface BeforeInstallPromptEvent extends Event {
@@ -26,13 +32,21 @@ const recentlyDismissed = () => {
   }
 };
 
+const DESCRIPTION: Record<InstallContext, MessageKey> = {
+  inapp: "install.inappDesc",
+  "ios-safari": "install.iosDesc",
+  "ios-other": "install.iosOtherDesc",
+  "android-firefox": "install.firefoxDesc",
+  prompt: "install.desc",
+};
+
 /**
- * Uygulama ana ekrana eklenmemişse gösterilir. Android/Chrome'da tek dokunuşla ekler,
- * iPhone'da (otomatik ekleme yok) Safari'deki adımları anlatır.
+ * Uygulama ana ekrana eklenmemişse, kullanılan tarayıcıya uygun yönergeyi gösterir.
+ * Chrome/Edge/Samsung'da tek dokunuşla ekler; uygulama içi tarayıcıda gerçek tarayıcıya yönlendirir.
  */
 export function InstallPrompt() {
   const { t } = useI18n();
-  const [mode, setMode] = useState<"ios" | "prompt" | null>(null);
+  const [mode, setMode] = useState<InstallContext | null>(null);
   const [deferred, setDeferred] = useState<BeforeInstallPromptEvent | null>(
     null,
   );
@@ -43,8 +57,11 @@ export function InstallPrompt() {
     // Kurulabilirlik için service worker kayıtlı olmalı (bildirimler de aynısını kullanır).
     navigator.serviceWorker?.register("/sw.js").catch(() => {});
 
-    if (isIOS()) {
-      setMode("ios");
+    const context = getInstallContext();
+
+    // Chrome/Edge: yalnızca tarayıcı kurulabilir dediğinde (olay gelince) gösterilir.
+    if (context !== "prompt") {
+      setMode(context);
 
       return;
     }
@@ -85,17 +102,32 @@ export function InstallPrompt() {
     if (outcome === "accepted") setMode(null);
   };
 
+  const copyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.origin);
+      toast.success(t("install.copied"));
+    } catch {
+      // Pano kapalıysa kullanıcı adresi elle kopyalar.
+      window.prompt(t("install.copy"), window.location.origin);
+    }
+  };
+
   return (
-    <Alert className="mb-4" status="accent">
+    <Alert className="mb-4" status={mode === "inapp" ? "warning" : "accent"}>
       <Alert.Indicator />
       <Alert.Content>
-        <Alert.Title>{t("install.title")}</Alert.Title>
-        <Alert.Description>
-          {mode === "ios" ? t("install.iosDesc") : t("install.desc")}
-        </Alert.Description>
+        <Alert.Title>
+          {mode === "inapp" ? t("install.inappTitle") : t("install.title")}
+        </Alert.Title>
+        <Alert.Description>{t(DESCRIPTION[mode])}</Alert.Description>
         {mode === "prompt" && deferred && (
           <Button className="mt-2" size="sm" onPress={install}>
             {t("install.button")}
+          </Button>
+        )}
+        {mode === "inapp" && (
+          <Button className="mt-2" size="sm" onPress={copyLink}>
+            {t("install.copy")}
           </Button>
         )}
       </Alert.Content>

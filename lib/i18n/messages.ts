@@ -108,6 +108,39 @@ const tr = {
   "install.iosDesc":
     "Safari'de alttaki Paylaş düğmesine dokunun, ardından \"Ana Ekrana Ekle\"yi seçin. iPhone'da bildirimler yalnızca bu şekilde gelir.",
   "install.close": "Kapat",
+  "install.iosOtherDesc":
+    "Tarayıcınızın Paylaş menüsünü açıp \"Ana Ekrana Ekle\"yi seçin. iPhone'da bildirimler yalnızca bu şekilde gelir (iOS 16.4 ve üstü).",
+  "install.firefoxDesc": "Sağ üstteki menüden (⋮) \"Yükle\" ya da \"Ana ekrana ekle\"yi seçin.",
+  "install.inappTitle": "Siteyi tarayıcıda açın",
+  "install.inappDesc":
+    "Bu sayfa bir uygulamanın içinde açıldı; burada ana ekrana ekleme ve bildirimler çalışmaz. Menüden \"Tarayıcıda aç\"ı seçin ya da bağlantıyı kopyalayıp Safari/Chrome'a yapıştırın.",
+  "install.copy": "Bağlantıyı kopyala",
+  "install.copied": "Bağlantı kopyalandı.",
+
+  "tour.help": "Nasıl kullanılır?",
+  "tour.next": "İleri",
+  "tour.back": "Geri",
+  "tour.skip": "Atla",
+  "tour.finish": "Başlayalım",
+  "tour.step": "{n} / {total}",
+  "tour.welcomeTitle": "Çamaşırhaneye hoş geldiniz",
+  "tour.welcomeBody": "Birkaç adımda sitenin nasıl kullanıldığını gösterelim.",
+  "tour.langTitle": "Dil",
+  "tour.langBody": "Siteyi Türkçe, İngilizce veya Arapça kullanabilirsiniz.",
+  "tour.requestTitle": "Bakiye ve yeni istek",
+  "tour.requestBody":
+    "Bakiyeniz burada görünür; her yıkamada ücret bakiyenizden düşer. Bakiye yüklemek için muhasebeciye başvurun. Çamaşır yıkatmak için \"Yeni yıkama isteği\"ne dokunun.",
+  "tour.formTitle": "İstek oluşturma",
+  "tour.formBody":
+    "Program, sıcaklık ve devri seçin. İsterseniz kurutma ekleyin ve çamaşırcıya not bırakın. Son olarak çamaşırlarınızın fotoğrafını çekin: fotoğraf zorunludur, yalnızca çamaşırcı görür ve 10 gün sonra silinir.",
+  "tour.notifTitle": "Bildirimler",
+  "tour.notifBody": "Bildirimleri açın; çamaşırınız hazır olunca telefonunuza haber gelir.",
+  "tour.historyTitle": "İsteklerim",
+  "tour.historyBody":
+    "İsteğinizin durumunu buradan takip edin: {flow}. \"Bakiye geçmişi\" sekmesinde yükleme ve harcamalarınızı görürsünüz.",
+  "tour.doneTitle": "Hazırsınız",
+  "tour.doneBody":
+    "Durum \"{done}\" olunca çamaşırınızı teslim alabilirsiniz. Bu turu tekrar görmek için üstteki ? düğmesine dokunun.",
 };
 
 export type MessageKey = keyof typeof tr;
@@ -214,6 +247,39 @@ const en: Messages = {
   "install.iosDesc":
     "In Safari, tap the Share button, then choose \"Add to Home Screen\". On iPhone, notifications only work this way.",
   "install.close": "Close",
+  "install.iosOtherDesc":
+    "Open your browser's Share menu and choose \"Add to Home Screen\". On iPhone, notifications only work this way (iOS 16.4 or later).",
+  "install.firefoxDesc": "Open the menu (⋮) at the top right and choose \"Install\" or \"Add to Home screen\".",
+  "install.inappTitle": "Open the site in your browser",
+  "install.inappDesc":
+    "This page was opened inside another app, where adding to the home screen and notifications don't work. Choose \"Open in browser\" from the menu, or copy the link and paste it into Safari/Chrome.",
+  "install.copy": "Copy link",
+  "install.copied": "Link copied.",
+
+  "tour.help": "How to use",
+  "tour.next": "Next",
+  "tour.back": "Back",
+  "tour.skip": "Skip",
+  "tour.finish": "Let's start",
+  "tour.step": "{n} / {total}",
+  "tour.welcomeTitle": "Welcome to the Laundry Room",
+  "tour.welcomeBody": "Let us show you how to use the site in a few steps.",
+  "tour.langTitle": "Language",
+  "tour.langBody": "You can use the site in Turkish, English or Arabic.",
+  "tour.requestTitle": "Balance and new request",
+  "tour.requestBody":
+    "Your balance is shown here; the price of each wash is deducted from it. Contact the accountant to add balance. Tap \"New wash request\" to have your laundry washed.",
+  "tour.formTitle": "Creating a request",
+  "tour.formBody":
+    "Choose the program, temperature and spin. Add drying and leave a note for the laundry staff if you like. Finally, take a photo of your laundry: it is required, only the laundry staff can see it, and it is deleted after 10 days.",
+  "tour.notifTitle": "Notifications",
+  "tour.notifBody": "Turn on notifications to get a message on your phone when your laundry is ready.",
+  "tour.historyTitle": "My requests",
+  "tour.historyBody":
+    "Follow the status of your request here: {flow}. The \"Balance history\" tab shows your top-ups and spending.",
+  "tour.doneTitle": "You're all set",
+  "tour.doneBody":
+    "When the status is \"{done}\", you can pick up your laundry. Tap the ? button at the top to see this tour again.",
 };
 
 const ar: Messages = {
@@ -317,6 +383,39 @@ const ar: Messages = {
   "install.iosDesc":
     "في Safari اضغط زر المشاركة ثم اختر \"إضافة إلى الشاشة الرئيسية\". على iPhone لا تصل الإشعارات إلا بهذه الطريقة.",
   "install.close": "إغلاق",
+  "install.iosOtherDesc":
+    "افتح قائمة المشاركة في متصفحك واختر \"إضافة إلى الشاشة الرئيسية\". على iPhone لا تصل الإشعارات إلا بهذه الطريقة (iOS 16.4 أو أحدث).",
+  "install.firefoxDesc": "افتح القائمة (⋮) في الأعلى واختر \"تثبيت\" أو \"إضافة إلى الشاشة الرئيسية\".",
+  "install.inappTitle": "افتح الموقع في المتصفح",
+  "install.inappDesc":
+    "فُتحت هذه الصفحة داخل تطبيق آخر، ولا تعمل هنا الإضافة إلى الشاشة الرئيسية ولا الإشعارات. اختر \"فتح في المتصفح\" من القائمة، أو انسخ الرابط والصقه في Safari/Chrome.",
+  "install.copy": "نسخ الرابط",
+  "install.copied": "تم نسخ الرابط.",
+
+  "tour.help": "طريقة الاستخدام",
+  "tour.next": "التالي",
+  "tour.back": "السابق",
+  "tour.skip": "تخطٍّ",
+  "tour.finish": "لنبدأ",
+  "tour.step": "{n} / {total}",
+  "tour.welcomeTitle": "أهلًا بك في المغسلة",
+  "tour.welcomeBody": "دعنا نوضح لك طريقة استخدام الموقع في خطوات قليلة.",
+  "tour.langTitle": "اللغة",
+  "tour.langBody": "يمكنك استخدام الموقع بالتركية أو الإنجليزية أو العربية.",
+  "tour.requestTitle": "الرصيد وطلب جديد",
+  "tour.requestBody":
+    "يظهر رصيدك هنا، ويُخصم منه سعر كل غسلة. راجع المحاسب لإضافة رصيد. اضغط \"طلب غسيل جديد\" لغسل ملابسك.",
+  "tour.formTitle": "إنشاء طلب",
+  "tour.formBody":
+    "اختر البرنامج ودرجة الحرارة وسرعة العصر. أضف التجفيف واترك ملاحظة لعامل المغسلة إن أردت. أخيرًا التقط صورة لغسيلك: الصورة إلزامية، ولا يراها إلا عامل المغسلة، وتُحذف بعد 10 أيام.",
+  "tour.notifTitle": "الإشعارات",
+  "tour.notifBody": "فعّل الإشعارات ليصلك تنبيه على هاتفك عندما يجهز غسيلك.",
+  "tour.historyTitle": "طلباتي",
+  "tour.historyBody":
+    "تابع حالة طلبك من هنا: {flow}. وفي تبويب \"سجل الرصيد\" ترى عمليات الشحن والإنفاق.",
+  "tour.doneTitle": "كل شيء جاهز",
+  "tour.doneBody":
+    "عندما تصبح الحالة \"{done}\" يمكنك استلام غسيلك. اضغط زر ? في الأعلى لمشاهدة هذه الجولة مرة أخرى.",
 };
 
 export const messages: Record<Locale, Messages> = { tr, en, ar };
