@@ -9,6 +9,7 @@ import { Button, Spinner } from "@heroui/react";
 
 import { useAuth } from "@/lib/auth-context";
 import { roleHome, roleLabel } from "@/lib/roles";
+import { ChangePassword } from "@/components/change-password";
 import { ThemeSwitch } from "@/components/theme-switch";
 import { Logo } from "@/components/icons";
 
@@ -72,6 +73,7 @@ export function AppShell({
         </div>
         <div className="flex items-center gap-2">
           <ThemeSwitch />
+          <ChangePassword />
           <Button size="sm" variant="tertiary" onPress={() => logout()}>
             Çıkış
           </Button>

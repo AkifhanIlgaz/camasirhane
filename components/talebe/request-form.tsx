@@ -188,7 +188,7 @@ export function RequestForm() {
             <Modal.Header>
               <Modal.Heading>Yeni yıkama isteği</Modal.Heading>
             </Modal.Header>
-            <form onSubmit={onSubmit}>
+            <form className="flex min-h-0 flex-1 flex-col" onSubmit={onSubmit}>
               <Modal.Body className="flex flex-col gap-4 p-6">
                 <OptionSelect
                   items={options.programs.map((p) => ({ id: p.name, text: p.name }))}

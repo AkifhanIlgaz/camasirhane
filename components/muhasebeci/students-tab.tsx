@@ -159,7 +159,7 @@ export function StudentsTab() {
                 Talebe No: {selected?.studentNo}
               </p>
             </Modal.Header>
-            <form onSubmit={onSubmit}>
+            <form className="flex min-h-0 flex-1 flex-col" onSubmit={onSubmit}>
               <Modal.Body className="p-6">
                 <TextField
                   fullWidth
