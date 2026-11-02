@@ -150,7 +150,8 @@ export function RequestForm() {
       setPhoto(null);
       modal.close();
       toast.success("İsteğiniz alındı.");
-    } catch {
+    } catch (err) {
+      console.error(err);
       setError("İstek oluşturulamadı. Fiyatlar değişmiş olabilir, tekrar deneyin.");
     } finally {
       setSubmitting(false);
@@ -246,6 +247,7 @@ export function RequestForm() {
                   <input
                     ref={fileInput}
                     accept="image/*"
+                    capture="environment"
                     className="sr-only"
                     type="file"
                     onChange={async (e) => {
@@ -310,7 +312,7 @@ export function RequestForm() {
                         <path d="M4 8a2 2 0 0 1 2-2h1.5l1-1.5h7l1 1.5H18a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z" />
                         <circle cx="12" cy="12.5" r="3.5" />
                       </svg>
-                      <span className="text-sm font-medium">Fotoğraf çek veya seç</span>
+                      <span className="text-sm font-medium">Fotoğraf çek</span>
                       <span className="text-xs text-muted">
                         Sadece çamaşırcı görür, 10 gün sonra silinir.
                       </span>

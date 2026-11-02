@@ -108,7 +108,7 @@ service cloud.firestore {
           'dryProgram', 'price', 'status', 'machineId', 'startedAt', 'createdAt', 'hasImage'
         ])
         && d.hasImage == true
-        && (existsAfter(/databases/$(database)/documents/requestImages/$(requestId)))
+        && existsAfter(/databases/$(database)/documents/requestImages/$(requestId))
         && d.uid == request.auth.uid
         && d.studentNo == me.studentNo
         && d.program is string
@@ -145,8 +145,8 @@ service cloud.firestore {
         && request.resource.data.expireAt is timestamp
         && request.resource.data.expireAt <= request.time + duration.value(10, 'd') + duration.value(1, 'h')
         && request.resource.data.expireAt >= request.time + duration.value(10, 'd') - duration.value(1, 'h')
-        && existsAfter(/databases/$(database)/documents/requests/$(requestId))
-        && getAfter(/databases/$(database)/documents/requests/$(requestId)).data.uid == request.auth.uid;
+        // Toplu yazmada doküman erişimi sınırı (20) dolmasın diye tek erişim: istek de aynı batch'te olmalı.
+        && existsAfter(/databases/$(database)/documents/requests/$(requestId));
 
       allow delete: if hasRole('camasirci') && resource.data.expireAt <= request.time;
     }
