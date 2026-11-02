@@ -13,6 +13,7 @@ import { createPortal } from "react-dom";
 import { Button, Card } from "@heroui/react";
 import clsx from "clsx";
 
+import { LanguageSwitch } from "@/components/talebe/language-switch";
 import { useI18n } from "@/lib/i18n";
 
 /** Tur bir kez otomatik gösterilir; adımlar değişirse sürüm artırılabilir. */
@@ -222,6 +223,12 @@ export function Tour() {
                   <Card.Title id="tour-title">{t(step.title)}</Card.Title>
                   <Card.Description>{t(step.body, params)}</Card.Description>
                 </Card.Header>
+                {/* Dil ilk adımda seçilir; tur hemen o dilde devam eder. */}
+                {index === 0 && (
+                  <Card.Content>
+                    <LanguageSwitch />
+                  </Card.Content>
+                )}
                 <Card.Footer className="flex items-center justify-between gap-2">
                   {isLast ? (
                     <span />

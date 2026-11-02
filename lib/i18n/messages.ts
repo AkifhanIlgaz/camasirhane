@@ -124,9 +124,10 @@ const tr = {
   "tour.finish": "Başlayalım",
   "tour.step": "{n} / {total}",
   "tour.welcomeTitle": "Çamaşırhaneye hoş geldiniz",
-  "tour.welcomeBody": "Birkaç adımda sitenin nasıl kullanıldığını gösterelim.",
+  "tour.welcomeBody":
+    "Önce dilinizi seçin, sonra birkaç adımda sitenin nasıl kullanıldığını gösterelim.",
   "tour.langTitle": "Dil",
-  "tour.langBody": "Siteyi Türkçe, İngilizce veya Arapça kullanabilirsiniz.",
+  "tour.langBody": "Dili istediğiniz zaman buradan değiştirebilirsiniz.",
   "tour.requestTitle": "Bakiye ve yeni istek",
   "tour.requestBody":
     "Bakiyeniz burada görünür; her yıkamada ücret bakiyenizden düşer. Bakiye yüklemek için muhasebeciye başvurun. Çamaşır yıkatmak için \"Yeni yıkama isteği\"ne dokunun.",
@@ -263,9 +264,10 @@ const en: Messages = {
   "tour.finish": "Let's start",
   "tour.step": "{n} / {total}",
   "tour.welcomeTitle": "Welcome to the Laundry Room",
-  "tour.welcomeBody": "Let us show you how to use the site in a few steps.",
+  "tour.welcomeBody":
+    "First choose your language, then let us show you how to use the site in a few steps.",
   "tour.langTitle": "Language",
-  "tour.langBody": "You can use the site in Turkish, English or Arabic.",
+  "tour.langBody": "You can change the language here at any time.",
   "tour.requestTitle": "Balance and new request",
   "tour.requestBody":
     "Your balance is shown here; the price of each wash is deducted from it. Contact the accountant to add balance. Tap \"New wash request\" to have your laundry washed.",
@@ -399,9 +401,10 @@ const ar: Messages = {
   "tour.finish": "لنبدأ",
   "tour.step": "{n} / {total}",
   "tour.welcomeTitle": "أهلًا بك في المغسلة",
-  "tour.welcomeBody": "دعنا نوضح لك طريقة استخدام الموقع في خطوات قليلة.",
+  "tour.welcomeBody":
+    "اختر لغتك أولًا، ثم دعنا نوضح لك طريقة استخدام الموقع في خطوات قليلة.",
   "tour.langTitle": "اللغة",
-  "tour.langBody": "يمكنك استخدام الموقع بالتركية أو الإنجليزية أو العربية.",
+  "tour.langBody": "يمكنك تغيير اللغة من هنا في أي وقت.",
   "tour.requestTitle": "الرصيد وطلب جديد",
   "tour.requestBody":
     "يظهر رصيدك هنا، ويُخصم منه سعر كل غسلة. راجع المحاسب لإضافة رصيد. اضغط \"طلب غسيل جديد\" لغسل ملابسك.",
