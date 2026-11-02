@@ -8,7 +8,7 @@ import type { Machine, WashRequest } from "@/types";
 
 const time = (r: WashRequest) => r.createdAt?.toDate().getTime() ?? Infinity;
 
-/** Çamaşırcı için makineler ve devam eden (teslim edilmemiş) istekler. */
+/** Çamaşırcı için makineler ve devam eden istekler. */
 export function useLaundry() {
   const [machines, setMachines] = useState<Machine[] | null>(null);
   const [requests, setRequests] = useState<WashRequest[] | null>(null);
@@ -27,7 +27,7 @@ export function useLaundry() {
     const unsubRequests = onSnapshot(
       query(
         collection(db, "requests"),
-        where("status", "in", ["bekliyor", "yikaniyor", "kurutuluyor", "bitti"]),
+        where("status", "in", ["bekliyor", "yikaniyor", "kurutuluyor"]),
       ),
       (snap) =>
         setRequests(

@@ -2,6 +2,7 @@ import { FC, useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 import clsx from "clsx";
 
+import { useI18n } from "@/lib/i18n";
 import { SunFilledIcon, MoonFilledIcon } from "@/components/icons";
 
 export interface ThemeSwitchProps {
@@ -9,6 +10,7 @@ export interface ThemeSwitchProps {
 }
 
 export const ThemeSwitch: FC<ThemeSwitchProps> = ({ className }) => {
+  const { t } = useI18n();
   const [isMounted, setIsMounted] = useState(false);
   const { setTheme, resolvedTheme } = useTheme();
 
@@ -27,7 +29,7 @@ export const ThemeSwitch: FC<ThemeSwitchProps> = ({ className }) => {
 
   return (
     <button
-      aria-label={`Switch to ${isLight ? "dark" : "light"} mode`}
+      aria-label={t(isLight ? "theme.toDark" : "theme.toLight")}
       className={clsx(
         "px-px transition-opacity hover:opacity-80 cursor-pointer",
         "inline-flex items-center justify-center",

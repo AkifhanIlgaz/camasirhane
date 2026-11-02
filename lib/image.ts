@@ -8,10 +8,10 @@ export const MAX_IMAGE_CHARS = 300_000;
 /** Fotoğrafı küçültüp JPEG data URL'ine çevirir; sınırı aşarsa kaliteyi düşürür. */
 export async function compressImage(file: File): Promise<string> {
   if (!file.type.startsWith("image/")) {
-    throw new Error("Sadece fotoğraf yükleyebilirsiniz.");
+    throw new Error("img.type");
   }
   if (file.size > MAX_FILE_BYTES) {
-    throw new Error("Fotoğraf en fazla 15 MB olabilir.");
+    throw new Error("img.size");
   }
 
   const bitmap = await createImageBitmap(file, { imageOrientation: "from-image" });
@@ -26,5 +26,5 @@ export async function compressImage(file: File): Promise<string> {
     const url = canvas.toDataURL("image/jpeg", quality);
     if (url.length <= MAX_IMAGE_CHARS) return url;
   }
-  throw new Error("Fotoğraf çok büyük, başka bir fotoğraf deneyin.");
+  throw new Error("img.big");
 }

@@ -48,6 +48,7 @@ export interface Transaction {
   createdAt: { toDate: () => Date } | null;
 }
 
+/** `teslim` artık kullanılmıyor; sadece eski kayıtlar için ("bitti" ile aynı sayılır). */
 export type RequestStatus = "bekliyor" | "yikaniyor" | "kurutuluyor" | "bitti" | "teslim";
 
 /** `requests/{id}` */
@@ -69,6 +70,8 @@ export interface WashRequest {
   createdAt: { toDate: () => Date } | null;
   /** Fotoğraf `requestImages/{id}` içinde; 10 gün sonra silinir. */
   hasImage?: boolean;
+  /** Talebenin çamaşırcıya notu (en fazla 200 karakter); eski kayıtlarda yoktur. */
+  note?: string;
 }
 
 /** `requestImages/{requestId}` — sadece talebe ve çamaşırcı okur. */

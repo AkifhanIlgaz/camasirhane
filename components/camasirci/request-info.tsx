@@ -17,6 +17,12 @@ export function RequestInfo({ request }: { request: WashRequest }) {
           {request.dryProgram ? ` (${request.dryProgram})` : ""}
         </p>
       )}
+      {request.note && (
+        <p className="mt-1 whitespace-pre-wrap rounded-lg bg-surface-secondary px-3 py-2 text-sm">
+          <span className="font-medium">Not: </span>
+          {request.note}
+        </p>
+      )}
       {request.hasImage && (
         <div className="mt-2">
           <RequestPhoto requestId={request.id} />

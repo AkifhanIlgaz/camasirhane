@@ -1,12 +1,14 @@
+import type { MessageKey } from "@/lib/i18n";
 import type { RequestStatus } from "@/types";
 
-export const statusLabel: Record<RequestStatus, string> = {
-  bekliyor: "Sırada",
-  yikaniyor: "Yıkanıyor",
-  kurutuluyor: "Kurutuluyor",
-  bitti: "Bitti",
-  teslim: "Teslim edildi",
-};
+/** Çeviri anahtarı: `t(statusKey[status])`. */
+export const statusKey = {
+  bekliyor: "status.bekliyor",
+  yikaniyor: "status.yikaniyor",
+  kurutuluyor: "status.kurutuluyor",
+  bitti: "status.bitti",
+  teslim: "status.teslim",
+} as const satisfies Record<RequestStatus, MessageKey>;
 
 export const statusColor: Record<
   RequestStatus,
@@ -16,5 +18,5 @@ export const statusColor: Record<
   yikaniyor: "accent",
   kurutuluyor: "accent",
   bitti: "success",
-  teslim: "default",
+  teslim: "success",
 };

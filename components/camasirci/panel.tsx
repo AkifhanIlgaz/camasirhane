@@ -12,7 +12,6 @@ import {
 } from "firebase/firestore";
 import { Spinner, Tabs } from "@heroui/react";
 
-import { DeliveryTab } from "@/components/camasirci/delivery-tab";
 import { MachinesTab } from "@/components/camasirci/machines-tab";
 import { QueueTab } from "@/components/camasirci/queue-tab";
 import { db } from "@/lib/firebase";
@@ -43,7 +42,6 @@ export function CamasirciPanel() {
   }
 
   const waiting = requests.filter((r) => r.status === "bekliyor").length;
-  const done = requests.filter((r) => r.status === "bitti").length;
 
   return (
     <Tabs className="w-full">
@@ -57,10 +55,6 @@ export function CamasirciPanel() {
             Makineler
             <Tabs.Indicator />
           </Tabs.Tab>
-          <Tabs.Tab id="teslim">
-            Teslim{done > 0 ? ` (${done})` : ""}
-            <Tabs.Indicator />
-          </Tabs.Tab>
         </Tabs.List>
       </Tabs.ListContainer>
       <Tabs.Panel className="pt-4" id="sira">
@@ -68,9 +62,6 @@ export function CamasirciPanel() {
       </Tabs.Panel>
       <Tabs.Panel className="pt-4" id="makineler">
         <MachinesTab machines={machines} requests={requests} />
-      </Tabs.Panel>
-      <Tabs.Panel className="pt-4" id="teslim">
-        <DeliveryTab machines={machines} requests={requests} />
       </Tabs.Panel>
     </Tabs>
   );

@@ -5,7 +5,7 @@ import clsx from "clsx";
 import { Providers } from "./providers";
 
 import { siteConfig } from "@/config/site";
-import { fontSans } from "@/config/fonts";
+import { fontArabic, fontSans } from "@/config/fonts";
 
 export const metadata: Metadata = {
   title: {
@@ -44,6 +44,7 @@ export default function RootLayout({
         className={clsx(
           "min-h-dvh text-foreground bg-background font-sans antialiased",
           fontSans.variable,
+          fontArabic.variable,
         )}
       >
         <Providers themeProps={{ attribute: "class", defaultTheme: "light" }}>

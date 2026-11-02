@@ -17,22 +17,24 @@ import {
   useOverlayState,
 } from "@heroui/react";
 
+import { type MessageKey, useI18n } from "@/lib/i18n";
 import { useAuth } from "@/lib/auth-context";
 
 const MIN_LENGTH = 6;
 
-const errorMessage = (code: string) =>
+const errorKey = (code: string): MessageKey =>
   code === "auth/wrong-password" || code === "auth/invalid-credential"
-    ? "Mevcut şifre hatalı."
+    ? "pw.err.wrong"
     : code === "auth/too-many-requests"
-      ? "Çok fazla deneme yapıldı. Lütfen biraz sonra tekrar deneyin."
+      ? "pw.err.tooMany"
       : code === "auth/network-request-failed"
-        ? "Bağlantı hatası. İnternetinizi kontrol edin."
-        : "Şifre değiştirilemedi, tekrar deneyin.";
+        ? "pw.err.network"
+        : "pw.err.generic";
 
 /** Her rol kendi şifresini değiştirebilir: mevcut şifre doğrulanır, sonra yenisi kaydedilir. */
 export function ChangePassword() {
   const { user } = useAuth();
+  const { t } = useI18n();
   const modal = useOverlayState();
   const [current, setCurrent] = useState("");
   const [next, setNext] = useState("");
@@ -67,11 +69,11 @@ export function ChangePassword() {
       await updatePassword(user, next);
       modal.close();
       reset();
-      toast.success("Şifreniz değiştirildi.");
+      toast.success(t("pw.success"));
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error(err);
-      setError(errorMessage((err as { code?: string }).code ?? ""));
+      setError(t(errorKey((err as { code?: string }).code ?? "")));
     } finally {
       setSubmitting(false);
     }
@@ -80,7 +82,7 @@ export function ChangePassword() {
   return (
     <>
       <Button size="sm" variant="tertiary" onPress={modal.open}>
-        Şifre
+        {t("pw.button")}
       </Button>
       <Modal.Backdrop
         isOpen={modal.isOpen}
@@ -93,7 +95,7 @@ export function ChangePassword() {
           <Modal.Dialog className="sm:max-w-md">
             <Modal.CloseTrigger />
             <Modal.Header>
-              <Modal.Heading>Şifre değiştir</Modal.Heading>
+              <Modal.Heading>{t("pw.title")}</Modal.Heading>
             </Modal.Header>
             <form className="flex min-h-0 flex-1 flex-col" onSubmit={onSubmit}>
               <Modal.Body className="flex flex-col gap-4 p-6">
@@ -106,7 +108,7 @@ export function ChangePassword() {
                   value={current}
                   onChange={setCurrent}
                 >
-                  <Label>Mevcut şifre</Label>
+                  <Label>{t("pw.current")}</Label>
                   <Input />
                 </TextField>
                 <TextField
@@ -119,12 +121,12 @@ export function ChangePassword() {
                   value={next}
                   onChange={setNext}
                 >
-                  <Label>Yeni şifre</Label>
+                  <Label>{t("pw.new")}</Label>
                   <Input />
                   <FieldError>
                     {sameAsOld
-                      ? "Yeni şifre mevcut şifreyle aynı olamaz."
-                      : `En az ${MIN_LENGTH} karakter olmalı.`}
+                      ? t("pw.same")
+                      : t("pw.minLength", { n: MIN_LENGTH })}
                   </FieldError>
                 </TextField>
                 <TextField
@@ -137,22 +139,22 @@ export function ChangePassword() {
                   value={again}
                   onChange={setAgain}
                 >
-                  <Label>Yeni şifre (tekrar)</Label>
+                  <Label>{t("pw.again")}</Label>
                   <Input />
-                  <FieldError>Şifreler eşleşmiyor.</FieldError>
+                  <FieldError>{t("pw.mismatch")}</FieldError>
                 </TextField>
                 {error && <p className="text-sm text-danger">{error}</p>}
               </Modal.Body>
               <Modal.Footer>
                 <Button slot="close" type="button" variant="secondary">
-                  Vazgeç
+                  {t("pw.cancel")}
                 </Button>
                 <Button
                   isDisabled={!canSubmit}
                   isPending={submitting}
                   type="submit"
                 >
-                  Değiştir
+                  {t("pw.submit")}
                 </Button>
               </Modal.Footer>
             </form>

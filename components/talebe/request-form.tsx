@@ -9,24 +9,45 @@ import {
   writeBatch,
 } from "firebase/firestore";
 import {
+  Alert,
   Button,
   Card,
+  Checkbox,
   Label,
   ListBox,
   Modal,
   Select,
   Spinner,
   Switch,
+  TextArea,
+  TextField,
   toast,
   useOverlayState,
   type Key,
 } from "@heroui/react";
 
+import { useI18n } from "@/lib/i18n";
 import { db } from "@/lib/firebase";
 import { useAuth } from "@/lib/auth-context";
 import { useSettings } from "@/lib/settings";
 import { formatMoney } from "@/lib/format";
 import { compressImage } from "@/lib/image";
+
+/** Bakiye bu kadar yıkamadan azsa "azalıyor" uyarısı gösterilir. */
+const LOW_BALANCE_WASHES = 2;
+
+const PHOTO_WARNING_KEY = "photo-warning-dismissed";
+
+const readDismissed = () => {
+  try {
+    return localStorage.getItem(PHOTO_WARNING_KEY) === "1";
+  } catch {
+    return false;
+  }
+};
+
+/** Not en fazla bu kadar karakter olabilir (kurallarla aynı). */
+const NOTE_MAX = 200;
 
 const IMAGE_TTL_MS = 10 * 24 * 60 * 60 * 1000;
 
@@ -65,6 +86,7 @@ function OptionSelect({
 export function RequestForm() {
   const { user, profile } = useAuth();
   const { pricing, options, loading } = useSettings();
+  const { t, locale } = useI18n();
 
   const [program, setProgram] = useState<Key | null>(null);
   const [temperature, setTemperature] = useState<Key | null>(null);
@@ -73,7 +95,29 @@ export function RequestForm() {
   const [softener, setSoftener] = useState(false);
   const [dry, setDry] = useState(false);
   const [photo, setPhoto] = useState<string | null>(null);
+  const [note, setNote] = useState("");
   const fileInput = useRef<HTMLInputElement>(null);
+  const warning = useOverlayState();
+  const [dontShowAgain, setDontShowAgain] = useState(false);
+
+  /** Uyarı daha önce "bir daha gösterme" ile kapatılmadıysa önce uyarıyı açar. */
+  const pickPhoto = () => {
+    if (readDismissed()) fileInput.current?.click();
+    else warning.open();
+  };
+
+  const acknowledgeWarning = () => {
+    if (dontShowAgain) {
+      try {
+        localStorage.setItem(PHOTO_WARNING_KEY, "1");
+      } catch {
+        // Tarayıcı depolaması kapalıysa uyarı her seferinde gösterilir.
+      }
+    }
+    warning.close();
+    // Kullanıcı dokunuşu içinde çağrıldığı için kamera/dosya seçici açılabilir.
+    fileInput.current?.click();
+  };
   const [error, setError] = useState<string | null>(null);
   const modal = useOverlayState();
   const [submitting, setSubmitting] = useState(false);
@@ -121,6 +165,7 @@ export function RequestForm() {
         startedAt: null,
         createdAt: serverTimestamp(),
         hasImage: true,
+        note: note.trim(),
       });
       batch.set(doc(db, "requestImages", requestRef.id), {
         uid: user.uid,
@@ -148,11 +193,12 @@ export function RequestForm() {
       setDry(false);
       setDryProgram(null);
       setPhoto(null);
+      setNote("");
       modal.close();
-      toast.success("İsteğiniz alındı.");
+      toast.success(t("form.success"));
     } catch (err) {
       console.error(err);
-      setError("İstek oluşturulamadı. Fiyatlar değişmiş olabilir, tekrar deneyin.");
+      setError(t("form.error"));
     } finally {
       setSubmitting(false);
     }
@@ -164,19 +210,33 @@ export function RequestForm() {
         <Card.Content className="gap-4">
           <div>
             <p className="text-sm text-muted">
-              Bakiyeniz · Talebe No {profile.studentNo}
+              {t("form.balance", { no: profile.studentNo ?? "" })}
             </p>
             <p className="mt-1 text-4xl font-bold leading-none tabular-nums">
-              {formatMoney(balance)}
+              {formatMoney(balance, locale)}
             </p>
           </div>
           <Button fullWidth onPress={modal.open}>
-            Yeni yıkama isteği
+            {t("form.new")}
           </Button>
-          {balance < pricing.washPrice && (
-            <p className="text-sm text-muted">
-              Bakiyeniz yetersiz. Bakiye eklemek için muhasebeciye başvurun.
-            </p>
+          {balance < pricing.washPrice * LOW_BALANCE_WASHES && (
+            <Alert status={balance < pricing.washPrice ? "danger" : "warning"}>
+              <Alert.Indicator />
+              <Alert.Content>
+                <Alert.Title>
+                  {balance < pricing.washPrice
+                    ? t("form.emptyTitle")
+                    : t("form.lowTitle")}
+                </Alert.Title>
+                <Alert.Description>
+                  {balance < pricing.washPrice
+                    ? t("form.emptyDesc")
+                    : t("form.lowDesc", {
+                        n: Math.floor(balance / pricing.washPrice),
+                      })}
+                </Alert.Description>
+              </Alert.Content>
+            </Alert>
           )}
         </Card.Content>
       </Card>
@@ -186,31 +246,31 @@ export function RequestForm() {
           <Modal.Dialog className="sm:max-w-md">
             <Modal.CloseTrigger />
             <Modal.Header>
-              <Modal.Heading>Yeni yıkama isteği</Modal.Heading>
+              <Modal.Heading>{t("form.new")}</Modal.Heading>
             </Modal.Header>
             <form className="flex min-h-0 flex-1 flex-col" onSubmit={onSubmit}>
               <Modal.Body className="flex flex-col gap-4 p-6">
                 <OptionSelect
                   items={options.programs.map((p) => ({ id: p.name, text: p.name }))}
-                  label="Program"
+                  label={t("form.program")}
                   value={program}
                   onChange={setProgram}
                 />
                 <OptionSelect
-                  items={options.temperatures.map((t) => ({
-                    id: String(t),
-                    text: `${t}°C`,
+                  items={options.temperatures.map((temp) => ({
+                    id: String(temp),
+                    text: `${temp}°C`,
                   }))}
-                  label="Sıcaklık"
+                  label={t("form.temperature")}
                   value={temperature}
                   onChange={setTemperature}
                 />
                 <OptionSelect
                   items={options.spins.map((s) => ({
                     id: String(s),
-                    text: `${s} devir`,
+                    text: t("form.spinValue", { n: s }),
                   }))}
-                  label="Devir"
+                  label={t("form.spin")}
                   value={spin}
                   onChange={setSpin}
                 />
@@ -219,7 +279,7 @@ export function RequestForm() {
                     <Switch.Control>
                       <Switch.Thumb />
                     </Switch.Control>
-                    Yumuşatıcım var
+                    {t("form.softener")}
                   </Switch.Content>
                 </Switch>
                 <Switch isSelected={dry} onChange={setDry}>
@@ -227,7 +287,7 @@ export function RequestForm() {
                     <Switch.Control>
                       <Switch.Thumb />
                     </Switch.Control>
-                    Kurutma olsun (+{formatMoney(pricing.dryPrice)})
+                    {t("form.dry", { price: formatMoney(pricing.dryPrice, locale) })}
                   </Switch.Content>
                 </Switch>
                 {dry && (
@@ -236,14 +296,14 @@ export function RequestForm() {
                       id: p.name,
                       text: p.name,
                     }))}
-                    label="Kurutma programı"
+                    label={t("form.dryProgram")}
                     value={dryProgram}
                     onChange={setDryProgram}
                   />
                 )}
 
                 <div className="flex flex-col gap-2">
-                  <Label>Çamaşır fotoğrafı</Label>
+                  <Label>{t("form.photoLabel")}</Label>
                   <input
                     ref={fileInput}
                     accept="image/*"
@@ -258,10 +318,11 @@ export function RequestForm() {
                         setPhoto(await compressImage(file));
                         setError(null);
                       } catch (err) {
+                        const code = err instanceof Error ? err.message : "";
                         setError(
-                          err instanceof Error && err.message
-                            ? err.message
-                            : "Fotoğraf okunamadı, başka bir fotoğraf deneyin.",
+                          code === "img.type" || code === "img.size" || code === "img.big"
+                            ? t(code)
+                            : t("form.photoReadError"),
                         );
                       }
                     }}
@@ -270,7 +331,7 @@ export function RequestForm() {
                     <div className="relative overflow-hidden rounded-2xl">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
-                        alt="Seçilen fotoğraf"
+                        alt={t("form.photoSelectedAlt")}
                         className="h-44 w-full object-cover"
                         src={photo}
                       />
@@ -279,9 +340,9 @@ export function RequestForm() {
                           size="sm"
                           type="button"
                           variant="secondary"
-                          onPress={() => fileInput.current?.click()}
+                          onPress={pickPhoto}
                         >
-                          Değiştir
+                          {t("form.photoChange")}
                         </Button>
                         <Button
                           size="sm"
@@ -289,7 +350,7 @@ export function RequestForm() {
                           variant="danger-soft"
                           onPress={() => setPhoto(null)}
                         >
-                          Kaldır
+                          {t("form.photoRemove")}
                         </Button>
                       </div>
                     </div>
@@ -297,7 +358,7 @@ export function RequestForm() {
                     <button
                       className="flex h-36 w-full flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-border bg-surface-secondary/50 px-4 text-center transition-colors hover:bg-surface-secondary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
                       type="button"
-                      onClick={() => fileInput.current?.click()}
+                      onClick={pickPhoto}
                     >
                       <svg
                         aria-hidden
@@ -312,41 +373,81 @@ export function RequestForm() {
                         <path d="M4 8a2 2 0 0 1 2-2h1.5l1-1.5h7l1 1.5H18a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z" />
                         <circle cx="12" cy="12.5" r="3.5" />
                       </svg>
-                      <span className="text-sm font-medium">Fotoğraf çek</span>
-                      <span className="text-xs text-muted">
-                        Sadece çamaşırcı görür, 10 gün sonra silinir.
+                      <span className="text-sm font-medium">{t("form.photoTake")}</span>
+                      <span className="text-xs font-medium text-danger">
+                        {t("form.photoHint")}
                       </span>
                     </button>
                   )}
                 </div>
 
+                <TextField fullWidth maxLength={NOTE_MAX} value={note} onChange={setNote}>
+                  <Label>{t("form.note")}</Label>
+                  <TextArea
+                    placeholder={t("form.notePlaceholder")}
+                    rows={3}
+                  />
+                  <span className="text-xs text-muted tabular-nums">
+                    {note.length}/{NOTE_MAX}
+                  </span>
+                </TextField>
+
                 <div className="flex items-center justify-between rounded-xl bg-surface-secondary px-4 py-3">
-                  <span className="text-sm text-muted">Toplam</span>
+                  <span className="text-sm text-muted">{t("form.total")}</span>
                   <span className="text-lg font-semibold tabular-nums">
-                    {formatMoney(price)}
+                    {formatMoney(price, locale)}
                   </span>
                 </div>
 
                 {insufficient && (
                   <p className="text-sm text-danger">
-                    Bakiyeniz yetersiz. Bakiye eklemek için muhasebeciye başvurun.
+                    {t("form.insufficient")}
                   </p>
                 )}
                 {error && <p className="text-sm text-danger">{error}</p>}
               </Modal.Body>
               <Modal.Footer>
                 <Button slot="close" type="button" variant="secondary">
-                  Vazgeç
+                  {t("form.cancel")}
                 </Button>
                 <Button
                   isDisabled={!complete || insufficient}
                   isPending={submitting}
                   type="submit"
                 >
-                  İstek oluştur
+                  {t("form.submit")}
                 </Button>
               </Modal.Footer>
             </form>
+          </Modal.Dialog>
+        </Modal.Container>
+      </Modal.Backdrop>
+
+      <Modal.Backdrop isOpen={warning.isOpen} onOpenChange={warning.setOpen}>
+        <Modal.Container placement="auto">
+          <Modal.Dialog className="sm:max-w-sm">
+            <Modal.CloseTrigger />
+            <Modal.Header>
+              <Modal.Heading>{t("form.warnTitle")}</Modal.Heading>
+            </Modal.Header>
+            <Modal.Body className="flex flex-col gap-4 p-6">
+              <p className="text-sm font-medium text-danger">
+                {t("form.warnText")}
+              </p>
+              <Checkbox isSelected={dontShowAgain} onChange={setDontShowAgain}>
+                <Checkbox.Content>
+                  <Checkbox.Control>
+                    <Checkbox.Indicator />
+                  </Checkbox.Control>
+                  {t("form.warnDontShow")}
+                </Checkbox.Content>
+              </Checkbox>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button fullWidth onPress={acknowledgeWarning}>
+                {t("form.warnOk")}
+              </Button>
+            </Modal.Footer>
           </Modal.Dialog>
         </Modal.Container>
       </Modal.Backdrop>

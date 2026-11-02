@@ -7,6 +7,7 @@ import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { Toast } from "@heroui/react";
 
 import { AuthProvider } from "@/lib/auth-context";
+import { I18nProvider } from "@/lib/i18n";
 import { DevSwitcher } from "@/components/dev-switcher";
 
 export interface ProvidersProps {
@@ -17,11 +18,13 @@ export interface ProvidersProps {
 export function Providers({ children, themeProps }: ProvidersProps) {
   return (
     <NextThemesProvider {...themeProps}>
-      <AuthProvider>
-        {children}
-        <DevSwitcher />
-        <Toast.Provider />
-      </AuthProvider>
+      <I18nProvider>
+        <AuthProvider>
+          {children}
+          <DevSwitcher />
+          <Toast.Provider />
+        </AuthProvider>
+      </I18nProvider>
     </NextThemesProvider>
   );
 }

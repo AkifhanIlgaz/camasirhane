@@ -89,7 +89,7 @@ service cloud.firestore {
       // Çamaşırcı yalnızca durum, makine ve başlama zamanını günceller.
       allow update: if hasRole('camasirci')
         && changedKeysOnly(['status', 'machineId', 'startedAt'])
-        && request.resource.data.status in ['bekliyor', 'yikaniyor', 'kurutuluyor', 'bitti', 'teslim'];
+        && request.resource.data.status in ['bekliyor', 'yikaniyor', 'kurutuluyor', 'bitti'];
     }
 
     function validNewRequest(requestId) {
@@ -101,13 +101,14 @@ service cloud.firestore {
 
       return d.keys().hasOnly([
           'uid', 'studentNo', 'program', 'temperature', 'spin', 'softener', 'dry',
-          'dryProgram', 'price', 'status', 'machineId', 'startedAt', 'createdAt', 'hasImage'
+          'dryProgram', 'price', 'status', 'machineId', 'startedAt', 'createdAt', 'hasImage', 'note'
         ])
         && d.keys().hasAll([
           'uid', 'studentNo', 'program', 'temperature', 'spin', 'softener', 'dry',
           'dryProgram', 'price', 'status', 'machineId', 'startedAt', 'createdAt', 'hasImage'
         ])
         && d.hasImage == true
+        && (!('note' in d) || (d.note is string && d.note.size() <= 200))
         && existsAfter(/databases/$(database)/documents/requestImages/$(requestId))
         && d.uid == request.auth.uid
         && d.studentNo == me.studentNo
