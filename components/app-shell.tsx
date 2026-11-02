@@ -11,6 +11,7 @@ import { LocaleScope, useI18n } from "@/lib/i18n";
 import { useAuth } from "@/lib/auth-context";
 import { roleHome } from "@/lib/roles";
 import { ChangePassword } from "@/components/change-password";
+import { InstallPrompt } from "@/components/install-prompt";
 import { ThemeSwitch } from "@/components/theme-switch";
 import { Logo } from "@/components/icons";
 
@@ -98,6 +99,7 @@ export function AppShell({
       <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col">
         <Header role={profile.role} onLogout={() => logout()} />
         <main className="flex-1 px-4 pt-4 pb-[calc(5rem+env(safe-area-inset-bottom))]">
+          <InstallPrompt />
           {children}
         </main>
       </div>

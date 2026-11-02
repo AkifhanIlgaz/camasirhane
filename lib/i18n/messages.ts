@@ -94,6 +94,20 @@ const tr = {
   "hist.note": "Not: {note}",
   "hist.topup": "Bakiye yükleme",
   "hist.wash": "Yıkama",
+
+  "notif.title": "Çamaşırınız hazır olunca haber verelim",
+  "notif.desc": "Çamaşırcı çamaşırınızı bitirdiğinde bu cihaza bildirim gönderilir.",
+  "notif.enable": "Bildirimleri aç",
+  "notif.deniedTitle": "Bildirimler kapalı",
+  "notif.denied":
+    "Çamaşırınız hazır olduğunda haber alamazsınız. Tarayıcı ayarlarından bu siteye bildirim izni verin.",
+  "notif.error": "Bildirimler açılamadı, tekrar deneyin.",
+  "install.title": "Ana ekrana ekleyin",
+  "install.desc": "Uygulamayı telefonunuzun ana ekranından tek dokunuşla açın.",
+  "install.button": "Ana ekrana ekle",
+  "install.iosDesc":
+    "Safari'de alttaki Paylaş düğmesine dokunun, ardından \"Ana Ekrana Ekle\"yi seçin. iPhone'da bildirimler yalnızca bu şekilde gelir.",
+  "install.close": "Kapat",
 };
 
 export type MessageKey = keyof typeof tr;
@@ -186,6 +200,20 @@ const en: Messages = {
   "hist.note": "Note: {note}",
   "hist.topup": "Balance top-up",
   "hist.wash": "Wash",
+
+  "notif.title": "Get notified when your laundry is ready",
+  "notif.desc": "You will get a notification on this device when the laundry staff finishes your laundry.",
+  "notif.enable": "Turn on notifications",
+  "notif.deniedTitle": "Notifications are off",
+  "notif.denied":
+    "You won't be notified when your laundry is ready. Allow notifications for this site in your browser settings.",
+  "notif.error": "Could not turn on notifications, please try again.",
+  "install.title": "Add to Home Screen",
+  "install.desc": "Open the app from your phone's home screen with one tap.",
+  "install.button": "Add to Home Screen",
+  "install.iosDesc":
+    "In Safari, tap the Share button, then choose \"Add to Home Screen\". On iPhone, notifications only work this way.",
+  "install.close": "Close",
 };
 
 const ar: Messages = {
@@ -275,6 +303,20 @@ const ar: Messages = {
   "hist.note": "ملاحظة: {note}",
   "hist.topup": "شحن الرصيد",
   "hist.wash": "غسيل",
+
+  "notif.title": "سنُعلمك عندما يجهز غسيلك",
+  "notif.desc": "سيصلك إشعار على هذا الجهاز عندما ينتهي عامل المغسلة من غسيلك.",
+  "notif.enable": "تفعيل الإشعارات",
+  "notif.deniedTitle": "الإشعارات متوقفة",
+  "notif.denied":
+    "لن يصلك إشعار عندما يجهز غسيلك. اسمح بالإشعارات لهذا الموقع من إعدادات المتصفح.",
+  "notif.error": "تعذّر تفعيل الإشعارات، حاول مرة أخرى.",
+  "install.title": "أضِف التطبيق إلى الشاشة الرئيسية",
+  "install.desc": "افتح التطبيق من الشاشة الرئيسية لهاتفك بلمسة واحدة.",
+  "install.button": "إضافة إلى الشاشة الرئيسية",
+  "install.iosDesc":
+    "في Safari اضغط زر المشاركة ثم اختر \"إضافة إلى الشاشة الرئيسية\". على iPhone لا تصل الإشعارات إلا بهذه الطريقة.",
+  "install.close": "إغلاق",
 };
 
 export const messages: Record<Locale, Messages> = { tr, en, ar };

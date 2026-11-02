@@ -19,6 +19,13 @@ export const metadata: Metadata = {
       : undefined,
   icons: {
     icon: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
+  },
+  // Ana ekrandan açılınca tarayıcı çubukları olmadan tam ekran açılır.
+  appleWebApp: {
+    capable: true,
+    title: siteConfig.name,
+    statusBarStyle: "default",
   },
 };
 

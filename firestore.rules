@@ -43,6 +43,16 @@ service cloud.firestore {
         && request.resource.data.username is string;
       allow delete: if hasRole('muhasebeci') && resource.data.role in ['talebe', 'camasirci'];
 
+      // Bildirim token'ları (FCM): her kullanıcı yalnızca kendi cihazlarını ekler/siler.
+      // Doküman id'si token'ın kendisidir; bildirimi sunucu (app/api/notify) gönderir.
+      match /fcmTokens/{token} {
+        allow create, update: if signedIn() && request.auth.uid == uid
+          && request.resource.data.keys().hasOnly(['locale', 'updatedAt'])
+          && request.resource.data.locale in ['tr', 'en', 'ar']
+          && request.resource.data.updatedAt == request.time;
+        allow delete: if signedIn() && request.auth.uid == uid;
+      }
+
       // Muhasebeci bakiyeyi değiştirebilir; talebe yalnızca kendi bakiyesini azaltabilir
       // (yıkama isteği oluştururken, bkz. requests).
       allow update: if changedKeysOnly(['balance'])

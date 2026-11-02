@@ -58,6 +58,8 @@ export interface WashRequest {
   hasImage?: boolean;
   /** Talebenin çamaşırcıya notu (en fazla 200 karakter); eski kayıtlarda yoktur. */
   note?: string;
+  /** Talebeye "hazır" bildirimi gönderildiyse zamanı (sunucu yazar). */
+  notifiedAt?: { toDate: () => Date } | null;
 }
 
 /** `requestImages/{requestId}` — sadece talebe ve çamaşırcı okur. */

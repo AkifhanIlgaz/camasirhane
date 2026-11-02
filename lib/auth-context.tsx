@@ -15,6 +15,7 @@ import {
 } from "firebase/auth";
 import { doc, onSnapshot } from "firebase/firestore";
 
+import { unregisterPush } from "@/lib/push";
 import { auth, db } from "@/lib/firebase";
 import type { UserProfile } from "@/types";
 
@@ -81,7 +82,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     login: async (username, password) => {
       await signInWithEmailAndPassword(auth, toEmail(username), password);
     },
-    logout: () => signOut(auth),
+    logout: async () => {
+      // Bu cihaza önceki kullanıcının bildirimleri gitmesin.
+      if (user) await unregisterPush(user.uid).catch(() => {});
+      await signOut(auth);
+    },
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
