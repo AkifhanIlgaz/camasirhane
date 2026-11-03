@@ -5,11 +5,7 @@ import { initializeApp } from "firebase/app";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { doc, getDoc, getFirestore, setDoc } from "firebase/firestore";
 
-// Verilmezse .env.local'deki geliştirme muhasebeci hesabı kullanılır.
-const SEED_USERNAME =
-  process.env.SEED_USERNAME ?? process.env.NEXT_PUBLIC_DEV_MUHASEBECI_USERNAME;
-const SEED_PASSWORD =
-  process.env.SEED_PASSWORD ?? process.env.NEXT_PUBLIC_DEV_MUHASEBECI_PASSWORD;
+const { SEED_USERNAME, SEED_PASSWORD } = process.env;
 
 if (!SEED_USERNAME || !SEED_PASSWORD) {
   console.error("SEED_USERNAME ve SEED_PASSWORD gerekli.");

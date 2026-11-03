@@ -8,7 +8,6 @@ import { Toast } from "@heroui/react";
 
 import { AuthProvider } from "@/lib/auth-context";
 import { I18nProvider } from "@/lib/i18n";
-import { DevSwitcher } from "@/components/dev-switcher";
 
 export interface ProvidersProps {
   children: React.ReactNode;
@@ -21,7 +20,6 @@ export function Providers({ children, themeProps }: ProvidersProps) {
       <I18nProvider>
         <AuthProvider>
           {children}
-          <DevSwitcher />
           <Toast.Provider />
         </AuthProvider>
       </I18nProvider>
