@@ -5,10 +5,11 @@ import { auth } from "@/lib/firebase";
 const RETRY_DELAYS_MS = [0, 2_000, 5_000];
 
 /**
- * Talebeye "çamaşırınız hazır" bildirimi gönderilmesini ister (bkz. app/api/notify).
+ * Talebeye isteğin o anki durumuna göre bildirim gönderilmesini ister
+ * ("kurutmaya alındı" veya "hazır"; bkz. app/api/notify).
  * Ağ hatasında birkaç kez dener; çamaşırcının işini bekletmemek için sonucu beklenmez.
  */
-export async function notifyLaundryReady(requestId: string) {
+export async function notifyStudent(requestId: string) {
   for (const delay of RETRY_DELAYS_MS) {
     if (delay) await new Promise((r) => setTimeout(r, delay));
     try {

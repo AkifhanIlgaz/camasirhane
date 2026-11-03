@@ -19,7 +19,7 @@ import {
 
 import { db } from "@/lib/firebase";
 import { formatTime } from "@/lib/format";
-import { notifyLaundryReady } from "@/lib/notify";
+import { notifyStudent } from "@/lib/notify";
 import { programMinutes, programName } from "@/lib/programs";
 import { RequestInfo } from "@/components/camasirci/request-info";
 import type { Machine, WashRequest } from "@/types";
@@ -72,7 +72,7 @@ export function MachinesTab({
     await batch.commit();
     toast.success(`${request.studentNo} numaralı talebenin çamaşırı hazır.`);
     // Talebeye bildirim; başarısız olsa da çamaşırcının akışı etkilenmez.
-    void notifyLaundryReady(request.id);
+    void notifyStudent(request.id);
   };
 
   const startDrying = async (dryer: Machine) => {
@@ -94,6 +94,8 @@ export function MachinesTab({
       await batch.commit();
       dryModal.close();
       toast.success(`${dryer.name} başlatıldı.`);
+      // Talebeye "yıkama bitti, kurutmaya alındı" bildirimi.
+      void notifyStudent(washed.request.id);
     } catch {
       toast.danger("Kurutma başlatılamadı. Tekrar deneyin.");
     } finally {

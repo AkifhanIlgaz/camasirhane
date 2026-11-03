@@ -4,14 +4,56 @@ import { adminAuth, adminDb, adminMessaging } from "@/lib/firebase-admin";
 
 export const runtime = "nodejs";
 
-const TEXT = {
+type Locale = "tr" | "en" | "ar";
+type Text = { title: string; body: string };
+
+/** Kurutma istendiyse: yıkama bitti, çamaşır kurutma makinesine alındı. */
+const DRYING: Record<Locale, Text> = {
   tr: {
-    title: "Çamaşırınız hazır",
-    body: "Çamaşırınızı teslim alabilirsiniz.",
+    title: "Yıkama bitti",
+    body: "Çamaşırınız kurutmaya alındı. Kuruyunca tekrar haber vereceğiz.",
   },
-  en: { title: "Your laundry is ready", body: "You can pick up your laundry." },
-  ar: { title: "غسيلك جاهز", body: "يمكنك استلام غسيلك الآن." },
-} as const;
+  en: {
+    title: "Washing is done",
+    body: "Your laundry is now drying. We'll let you know when it's dry.",
+  },
+  ar: {
+    title: "انتهى الغسيل",
+    body: "غسيلك الآن في المجفف. سنخبرك عندما يجف.",
+  },
+};
+
+/** Kurutma istenmediyse: çamaşır yıkama makinesinden ıslak çıkar. */
+const WASHED: Record<Locale, Text> = {
+  tr: {
+    title: "Çamaşırınız yıkandı",
+    body: "Yıkama bitti. Çamaşırınızı teslim alıp kurutabilirsiniz.",
+  },
+  en: {
+    title: "Your laundry is washed",
+    body: "Washing is done. You can pick up your laundry and dry it.",
+  },
+  ar: {
+    title: "تم غسل غسيلك",
+    body: "انتهى الغسيل. يمكنك استلام غسيلك وتجفيفه.",
+  },
+};
+
+/** Kurutma istendiyse: çamaşır kurutma makinesinden kuru çıkar. */
+const DRIED: Record<Locale, Text> = {
+  tr: {
+    title: "Çamaşırınız kurudu",
+    body: "Yıkama ve kurutma bitti. Çamaşırınızı teslim alabilirsiniz.",
+  },
+  en: {
+    title: "Your laundry is dry",
+    body: "Washing and drying are done. You can pick up your laundry.",
+  },
+  ar: {
+    title: "غسيلك جاف",
+    body: "انتهى الغسيل والتجفيف. يمكنك استلام غسيلك الآن.",
+  },
+};
 
 /** Bu hatalarda token artık geçersizdir ve silinir. */
 const STALE_CODES = new Set([
@@ -22,8 +64,9 @@ const STALE_CODES = new Set([
 const json = (body: object, status = 200) => Response.json(body, { status });
 
 /**
- * Çamaşırcı isteği "bitti" yaptıktan sonra çağırır; talebenin cihazlarına bildirim gönderir.
- * Her istek için en fazla bir kez gönderilir (`notifiedAt`).
+ * Çamaşırcı isteği "kurutuluyor" veya "bitti" yaptıktan sonra çağırır; talebenin cihazlarına
+ * isteğin o anki durumuna uygun bildirimi gönderir. Her aşama için en fazla bir kez gönderilir
+ * (`dryingNotifiedAt`, `notifiedAt`).
  */
 export async function POST(req: Request) {
   const idToken = req.headers.get("authorization")?.replace(/^Bearer /, "");
@@ -57,12 +100,27 @@ export async function POST(req: Request) {
     const snap = await tx.get(requestRef);
 
     if (!snap.exists) return { error: "not-found" as const };
-    if (snap.get("status") !== "bitti")
-      return { error: "not-finished" as const };
-    if (snap.get("notifiedAt")) return { skipped: true as const };
-    tx.update(requestRef, { notifiedAt: FieldValue.serverTimestamp() });
 
-    return { uid: snap.get("uid") as string };
+    const status = snap.get("status");
+    const flag =
+      status === "kurutuluyor"
+        ? "dryingNotifiedAt"
+        : status === "bitti"
+          ? "notifiedAt"
+          : null;
+
+    if (!flag) return { error: "not-notifiable" as const };
+    if (snap.get(flag)) return { skipped: true as const };
+    tx.update(requestRef, { [flag]: FieldValue.serverTimestamp() });
+
+    const texts =
+      status === "kurutuluyor"
+        ? DRYING
+        : snap.get("dry") === true
+          ? DRIED
+          : WASHED;
+
+    return { uid: snap.get("uid") as string, flag, texts };
   });
 
   if ("error" in claim) return json({ error: claim.error }, 409);
@@ -73,10 +131,11 @@ export async function POST(req: Request) {
 
     if (tokens.empty) return json({ sent: 0 });
 
+    const { texts } = claim;
     const result = await adminMessaging().sendEach(
       tokens.docs.map((d) => ({
         token: d.id,
-        notification: TEXT[d.get("locale") as keyof typeof TEXT] ?? TEXT.tr,
+        notification: texts[d.get("locale") as Locale] ?? texts.tr,
         // Bildirime dokununca açılacak sayfa (bkz. public/sw.js).
         data: { requestId, link: "/" },
       })),
@@ -94,7 +153,7 @@ export async function POST(req: Request) {
   } catch (e) {
     // Gönderilemediyse işareti geri al ki çamaşırcının tekrar denemesi işe yarasın.
     await requestRef
-      .update({ notifiedAt: FieldValue.delete() })
+      .update({ [claim.flag]: FieldValue.delete() })
       .catch(() => {});
     console.error(e);
 

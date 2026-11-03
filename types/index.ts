@@ -60,6 +60,8 @@ export interface WashRequest {
   note?: string;
   /** Talebeye "hazır" bildirimi gönderildiyse zamanı (sunucu yazar). */
   notifiedAt?: { toDate: () => Date } | null;
+  /** Talebeye "kurutmaya alındı" bildirimi gönderildiyse zamanı (sunucu yazar). */
+  dryingNotifiedAt?: { toDate: () => Date } | null;
 }
 
 /** `requestImages/{requestId}` — sadece talebe ve çamaşırcı okur. */
