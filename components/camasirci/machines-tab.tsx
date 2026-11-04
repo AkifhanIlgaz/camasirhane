@@ -1,5 +1,7 @@
 "use client";
 
+import type { Machine, WashRequest } from "@/types";
+
 import { useEffect, useState } from "react";
 import {
   doc,
@@ -22,7 +24,6 @@ import { formatTime } from "@/lib/format";
 import { notifyStudent } from "@/lib/notify";
 import { programMinutes, programName } from "@/lib/programs";
 import { RequestInfo } from "@/components/camasirci/request-info";
-import type { Machine, WashRequest } from "@/types";
 
 /** Kalan süreyi görmek için yarım dakikada bir yenilenen şimdiki zaman. */
 function useNow() {

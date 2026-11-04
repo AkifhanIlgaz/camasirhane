@@ -1,17 +1,14 @@
 "use client";
 
+import type { Machine, WashRequest } from "@/types";
+
 import { useState } from "react";
-import {
-  doc,
-  serverTimestamp,
-  writeBatch,
-} from "firebase/firestore";
+import { doc, serverTimestamp, writeBatch } from "firebase/firestore";
 import { Button, Card, Modal, toast, useOverlayState } from "@heroui/react";
 
 import { db } from "@/lib/firebase";
 import { formatDateTime } from "@/lib/format";
 import { RequestInfo } from "@/components/camasirci/request-info";
-import type { Machine, WashRequest } from "@/types";
 
 export function QueueTab({
   machines,
@@ -74,7 +71,9 @@ export function QueueTab({
                     <RequestInfo request={r} />
                     <span className="shrink-0 text-xs text-muted">
                       #{i + 1}
-                      {r.createdAt ? ` · ${formatDateTime(r.createdAt.toDate())}` : ""}
+                      {r.createdAt
+                        ? ` · ${formatDateTime(r.createdAt.toDate())}`
+                        : ""}
                     </span>
                   </div>
                   <Button size="sm" onPress={() => open(r)}>

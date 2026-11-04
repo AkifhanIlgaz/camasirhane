@@ -34,7 +34,8 @@ export interface Transaction {
 }
 
 /** `teslim` artık kullanılmıyor; sadece eski kayıtlar için ("bitti" ile aynı sayılır). */
-export type RequestStatus = "bekliyor" | "yikaniyor" | "kurutuluyor" | "bitti" | "teslim";
+export type RequestStatus =
+  "bekliyor" | "yikaniyor" | "kurutuluyor" | "bitti" | "teslim";
 
 /** `requests/{id}` */
 export interface WashRequest {

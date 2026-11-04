@@ -11,11 +11,10 @@ import {
   where,
 } from "firebase/firestore";
 import { Spinner, Tabs } from "@heroui/react";
+import { deleteObject, ref } from "firebase/storage";
 
 import { MachinesTab } from "@/components/camasirci/machines-tab";
 import { QueueTab } from "@/components/camasirci/queue-tab";
-import { deleteObject, ref } from "firebase/storage";
-
 import { db, storage } from "@/lib/firebase";
 import { useLaundry } from "@/lib/use-laundry";
 
@@ -35,6 +34,7 @@ export function CamasirciPanel() {
         Promise.all(
           snap.docs.map(async (d) => {
             const path = d.data().path as string | undefined;
+
             if (path) {
               // Dosya zaten yoksa (object-not-found) kaydı yine de sil.
               await deleteObject(ref(storage, path)).catch((e) => {

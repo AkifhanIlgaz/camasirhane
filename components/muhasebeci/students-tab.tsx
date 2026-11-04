@@ -1,5 +1,7 @@
 "use client";
 
+import type { UserProfile } from "@/types";
+
 import { type FormEvent, useEffect, useState } from "react";
 import {
   collection,
@@ -26,7 +28,6 @@ import {
 
 import { auth, db } from "@/lib/firebase";
 import { formatMoney } from "@/lib/format";
-import type { UserProfile } from "@/types";
 
 type Student = UserProfile & { uid: string };
 
@@ -81,7 +82,9 @@ export function StudentsTab() {
     try {
       const batch = writeBatch(db);
 
-      batch.update(doc(db, "users", selected.uid), { balance: increment(value) });
+      batch.update(doc(db, "users", selected.uid), {
+        balance: increment(value),
+      });
       batch.set(doc(collection(db, "transactions")), {
         uid: selected.uid,
         studentNo: selected.studentNo,
@@ -92,7 +95,9 @@ export function StudentsTab() {
       });
       await batch.commit();
       modal.close();
-      toast.success(`${selected.studentNo} numaralı talebeye ${formatMoney(value)} eklendi.`);
+      toast.success(
+        `${selected.studentNo} numaralı talebeye ${formatMoney(value)} eklendi.`,
+      );
     } catch {
       setError("Bakiye eklenemedi. Tekrar deneyin.");
     } finally {

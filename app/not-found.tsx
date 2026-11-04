@@ -9,10 +9,7 @@ export default function NotFound() {
           Aradığınız sayfa mevcut değil.
         </p>
       </div>
-      <NextLink
-        className="button button--primary button--md"
-        href="/"
-      >
+      <NextLink className="button button--primary button--md" href="/">
         Ana sayfaya dön
       </NextLink>
     </div>
