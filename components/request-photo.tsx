@@ -1,14 +1,14 @@
 "use client";
 
+import type { RequestImage } from "@/types";
+
 import { useEffect, useState } from "react";
 import { doc, getDoc } from "firebase/firestore";
 import { Modal, useOverlayState } from "@heroui/react";
-
-import { useI18n } from "@/lib/i18n";
 import { getDownloadURL, ref } from "firebase/storage";
 
+import { useI18n } from "@/lib/i18n";
 import { db, storage } from "@/lib/firebase";
-import type { RequestImage } from "@/types";
 
 /** İstek fotoğrafı küçük resim olarak görünür, dokununca büyür. 10 gün sonra silinir. */
 export function RequestPhoto({ requestId }: { requestId: string }) {
@@ -28,6 +28,7 @@ export function RequestPhoto({ requestId }: { requestId: string }) {
           : data.path
             ? await getDownloadURL(ref(storage, data.path))
             : (data.image ?? null);
+
         if (active) setImage(url);
       })
       .catch(() => active && setImage(null));
@@ -38,13 +39,18 @@ export function RequestPhoto({ requestId }: { requestId: string }) {
   }, [requestId]);
 
   if (image === undefined) return null;
-  if (image === null) return <p className="text-xs text-muted">{t("photo.deleted")}</p>;
+  if (image === null)
+    return <p className="text-xs text-muted">{t("photo.deleted")}</p>;
 
   return (
     <>
       <button className="w-fit" type="button" onClick={modal.open}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img alt={t("photo.alt")} className="h-20 w-20 rounded-xl object-cover" src={image} />
+        <img
+          alt={t("photo.alt")}
+          className="h-20 w-20 rounded-xl object-cover"
+          src={image}
+        />
       </button>
       <Modal.Backdrop isOpen={modal.isOpen} onOpenChange={modal.setOpen}>
         <Modal.Container placement="auto">
@@ -52,7 +58,11 @@ export function RequestPhoto({ requestId }: { requestId: string }) {
             <Modal.CloseTrigger />
             <Modal.Body className="p-4">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img alt={t("photo.alt")} className="w-full rounded-xl" src={image} />
+              <img
+                alt={t("photo.alt")}
+                className="w-full rounded-xl"
+                src={image}
+              />
             </Modal.Body>
           </Modal.Dialog>
         </Modal.Container>

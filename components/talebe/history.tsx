@@ -1,5 +1,7 @@
 "use client";
 
+import type { Transaction, WashRequest } from "@/types";
+
 import { useEffect, useState } from "react";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { Card, Chip, Spinner, Tabs } from "@heroui/react";
@@ -12,7 +14,6 @@ import { useI18n } from "@/lib/i18n";
 import { formatDateTime, formatMoney } from "@/lib/format";
 import { programName } from "@/lib/programs";
 import { statusColor, statusKey } from "@/lib/status";
-import type { Transaction, WashRequest } from "@/types";
 
 /** Kendi dokümanlarını dinler; index gerekmesin diye sıralama istemcide yapılır. */
 function useOwnDocs<T extends { createdAt: { toDate: () => Date } | null }>(
@@ -68,17 +69,23 @@ function Requests() {
           <Card>
             <Card.Content className="gap-3">
               <div className="flex items-center justify-between gap-3">
-                <p className="text-base font-semibold">{programName("wash", r.program, locale)}</p>
+                <p className="text-base font-semibold">
+                  {programName("wash", r.program, locale)}
+                </p>
                 <Chip color={statusColor[r.status]} size="sm" variant="soft">
                   <Chip.Label>{t(statusKey[r.status])}</Chip.Label>
                 </Chip>
               </div>
               <div className="flex flex-wrap gap-1.5">
                 <Chip size="sm" variant="soft">
-                  <Chip.Label className="tabular-nums">{r.temperature}°C</Chip.Label>
+                  <Chip.Label className="tabular-nums">
+                    {r.temperature}°C
+                  </Chip.Label>
                 </Chip>
                 <Chip size="sm" variant="soft">
-                  <Chip.Label className="tabular-nums">{t("form.spinValue", { n: r.spin })}</Chip.Label>
+                  <Chip.Label className="tabular-nums">
+                    {t("form.spinValue", { n: r.spin })}
+                  </Chip.Label>
                 </Chip>
                 {r.softener && (
                   <Chip color="accent" size="sm" variant="soft">
@@ -103,7 +110,9 @@ function Requests() {
               {r.hasImage && <RequestPhoto requestId={r.id} />}
               <div className="flex items-baseline justify-between gap-3">
                 <p className="text-xs text-muted">
-                  {r.createdAt ? formatDateTime(r.createdAt.toDate(), locale) : ""}
+                  {r.createdAt
+                    ? formatDateTime(r.createdAt.toDate(), locale)
+                    : ""}
                 </p>
                 <p className="text-lg font-semibold leading-none tabular-nums">
                   {formatMoney(r.price, locale)}
@@ -135,7 +144,9 @@ function Transactions() {
                   {tx.type === "yukleme" ? t("hist.topup") : t("hist.wash")}
                 </p>
                 <p className="text-sm text-muted">
-                  {tx.createdAt ? formatDateTime(tx.createdAt.toDate(), locale) : ""}
+                  {tx.createdAt
+                    ? formatDateTime(tx.createdAt.toDate(), locale)
+                    : ""}
                 </p>
               </div>
               <p

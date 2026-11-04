@@ -8,7 +8,7 @@ export const LOCALES: { id: Locale; label: string }[] = [
 
 /** Türkçe kaynak metindir; diğer diller aynı anahtarlara sahip olmak zorundadır. */
 const tr = {
-  "brand": "Çamaşırhane",
+  brand: "Çamaşırhane",
   "role.talebe": "Talebe",
   "role.camasirci": "Çamaşırcı",
   "role.muhasebeci": "Muhasebeci",
@@ -18,7 +18,7 @@ const tr = {
   "shell.noProfileHint": "Lütfen muhasebeci ile iletişime geçin.",
   "theme.toDark": "Koyu moda geç",
   "theme.toLight": "Açık moda geç",
-  "language": "Dil",
+  language: "Dil",
 
   "status.bekliyor": "Sırada",
   "status.yikaniyor": "Yıkanıyor",
@@ -38,7 +38,8 @@ const tr = {
   "pw.minLength": "En az {n} karakter olmalı.",
   "pw.mismatch": "Şifreler eşleşmiyor.",
   "pw.err.wrong": "Mevcut şifre hatalı.",
-  "pw.err.tooMany": "Çok fazla deneme yapıldı. Lütfen biraz sonra tekrar deneyin.",
+  "pw.err.tooMany":
+    "Çok fazla deneme yapıldı. Lütfen biraz sonra tekrar deneyin.",
   "pw.err.network": "Bağlantı hatası. İnternetinizi kontrol edin.",
   "pw.err.generic": "Şifre değiştirilemedi, tekrar deneyin.",
 
@@ -51,7 +52,8 @@ const tr = {
   "form.lowDesc":
     "Sadece {n} yıkamalık bakiyeniz kaldı. Bakiye eklemek için muhasebeciye başvurun.",
   "form.emptyTitle": "Bakiyeniz yetersiz",
-  "form.emptyDesc": "Yıkama isteği için bakiye eklemek üzere muhasebeciye başvurun.",
+  "form.emptyDesc":
+    "Yıkama isteği için bakiye eklemek üzere muhasebeciye başvurun.",
   "form.program": "Program",
   "form.temperature": "Sıcaklık",
   "form.spin": "Devir",
@@ -70,11 +72,13 @@ const tr = {
   "form.note": "Not (isteğe bağlı)",
   "form.notePlaceholder": "Çamaşırcıya iletmek istediğiniz bir not varsa yazın",
   "form.total": "Toplam",
-  "form.insufficient": "Bakiyeniz yetersiz. Bakiye eklemek için muhasebeciye başvurun.",
+  "form.insufficient":
+    "Bakiyeniz yetersiz. Bakiye eklemek için muhasebeciye başvurun.",
   "form.cancel": "Vazgeç",
   "form.submit": "İstek oluştur",
   "form.success": "İsteğiniz alındı.",
-  "form.error": "İstek oluşturulamadı. Fiyatlar değişmiş olabilir, tekrar deneyin.",
+  "form.error":
+    "İstek oluşturulamadı. Fiyatlar değişmiş olabilir, tekrar deneyin.",
   "form.warnTitle": "Fotoğraf uyarısı",
   "form.warnText":
     "Sadece çamaşırlarınızın fotoğrafını çekin. Yüz, kimlik ve kişisel bilgi içeren görüntüler yüklemeyin. Fotoğrafı yalnızca çamaşırcı görür ve 10 gün sonra otomatik silinir.",
@@ -96,7 +100,8 @@ const tr = {
   "hist.wash": "Yıkama",
 
   "notif.title": "Çamaşırınız hazır olunca haber verelim",
-  "notif.desc": "Çamaşırcı çamaşırınızı bitirdiğinde bu cihaza bildirim gönderilir.",
+  "notif.desc":
+    "Çamaşırcı çamaşırınızı bitirdiğinde bu cihaza bildirim gönderilir.",
   "notif.enable": "Bildirimleri aç",
   "notif.deniedTitle": "Bildirimler kapalı",
   "notif.denied":
@@ -109,11 +114,12 @@ const tr = {
     "Safari'de alttaki Paylaş düğmesine dokunun, ardından \"Ana Ekrana Ekle\"yi seçin. iPhone'da bildirimler yalnızca bu şekilde gelir.",
   "install.close": "Kapat",
   "install.iosOtherDesc":
-    "Tarayıcınızın Paylaş menüsünü açıp \"Ana Ekrana Ekle\"yi seçin. iPhone'da bildirimler yalnızca bu şekilde gelir (iOS 16.4 ve üstü).",
-  "install.firefoxDesc": "Sağ üstteki menüden (⋮) \"Yükle\" ya da \"Ana ekrana ekle\"yi seçin.",
+    'Tarayıcınızın Paylaş menüsünü açıp "Ana Ekrana Ekle"yi seçin. iPhone\'da bildirimler yalnızca bu şekilde gelir (iOS 16.4 ve üstü).',
+  "install.firefoxDesc":
+    'Sağ üstteki menüden (⋮) "Yükle" ya da "Ana ekrana ekle"yi seçin.',
   "install.inappTitle": "Siteyi tarayıcıda açın",
   "install.inappDesc":
-    "Bu sayfa bir uygulamanın içinde açıldı; burada ana ekrana ekleme ve bildirimler çalışmaz. Menüden \"Tarayıcıda aç\"ı seçin ya da bağlantıyı kopyalayıp Safari/Chrome'a yapıştırın.",
+    'Bu sayfa bir uygulamanın içinde açıldı; burada ana ekrana ekleme ve bildirimler çalışmaz. Menüden "Tarayıcıda aç"ı seçin ya da bağlantıyı kopyalayıp Safari/Chrome\'a yapıştırın.',
   "install.copy": "Bağlantıyı kopyala",
   "install.copied": "Bağlantı kopyalandı.",
 
@@ -130,25 +136,26 @@ const tr = {
   "tour.langBody": "Dili istediğiniz zaman buradan değiştirebilirsiniz.",
   "tour.requestTitle": "Bakiye ve yeni istek",
   "tour.requestBody":
-    "Bakiyeniz burada görünür; her yıkamada ücret bakiyenizden düşer. Bakiye yüklemek için muhasebeciye başvurun. Çamaşır yıkatmak için \"Yeni yıkama isteği\"ne dokunun.",
+    'Bakiyeniz burada görünür; her yıkamada ücret bakiyenizden düşer. Bakiye yüklemek için muhasebeciye başvurun. Çamaşır yıkatmak için "Yeni yıkama isteği"ne dokunun.',
   "tour.formTitle": "İstek oluşturma",
   "tour.formBody":
     "Program, sıcaklık ve devri seçin. İsterseniz kurutma ekleyin ve çamaşırcıya not bırakın. Son olarak çamaşırlarınızın fotoğrafını çekin: fotoğraf zorunludur, yalnızca çamaşırcı görür ve 10 gün sonra silinir.",
   "tour.notifTitle": "Bildirimler",
-  "tour.notifBody": "Bildirimleri açın; çamaşırınız hazır olunca telefonunuza haber gelir.",
+  "tour.notifBody":
+    "Bildirimleri açın; çamaşırınız hazır olunca telefonunuza haber gelir.",
   "tour.historyTitle": "İsteklerim",
   "tour.historyBody":
-    "İsteğinizin durumunu buradan takip edin: {flow}. \"Bakiye geçmişi\" sekmesinde yükleme ve harcamalarınızı görürsünüz.",
+    'İsteğinizin durumunu buradan takip edin: {flow}. "Bakiye geçmişi" sekmesinde yükleme ve harcamalarınızı görürsünüz.',
   "tour.doneTitle": "Hazırsınız",
   "tour.doneBody":
-    "Durum \"{done}\" olunca çamaşırınızı teslim alabilirsiniz. Bu turu tekrar görmek için üstteki ? düğmesine dokunun.",
+    'Durum "{done}" olunca çamaşırınızı teslim alabilirsiniz. Bu turu tekrar görmek için üstteki ? düğmesine dokunun.',
 };
 
 export type MessageKey = keyof typeof tr;
 type Messages = Record<MessageKey, string>;
 
 const en: Messages = {
-  "brand": "Laundry Room",
+  brand: "Laundry Room",
   "role.talebe": "Student",
   "role.camasirci": "Laundry staff",
   "role.muhasebeci": "Accountant",
@@ -158,7 +165,7 @@ const en: Messages = {
   "shell.noProfileHint": "Please contact the accountant.",
   "theme.toDark": "Switch to dark mode",
   "theme.toLight": "Switch to light mode",
-  "language": "Language",
+  language: "Language",
 
   "status.bekliyor": "In queue",
   "status.yikaniyor": "Washing",
@@ -191,7 +198,8 @@ const en: Messages = {
   "form.lowDesc":
     "You only have enough balance for {n} wash(es). Contact the accountant to add balance.",
   "form.emptyTitle": "Insufficient balance",
-  "form.emptyDesc": "Contact the accountant to add balance before requesting a wash.",
+  "form.emptyDesc":
+    "Contact the accountant to add balance before requesting a wash.",
   "form.program": "Program",
   "form.temperature": "Temperature",
   "form.spin": "Spin",
@@ -210,11 +218,13 @@ const en: Messages = {
   "form.note": "Note (optional)",
   "form.notePlaceholder": "Write a note for the laundry staff if you have one",
   "form.total": "Total",
-  "form.insufficient": "Insufficient balance. Contact the accountant to add balance.",
+  "form.insufficient":
+    "Insufficient balance. Contact the accountant to add balance.",
   "form.cancel": "Cancel",
   "form.submit": "Create request",
   "form.success": "Your request has been received.",
-  "form.error": "Could not create the request. Prices may have changed, please try again.",
+  "form.error":
+    "Could not create the request. Prices may have changed, please try again.",
   "form.warnTitle": "Photo notice",
   "form.warnText":
     "Only photograph your laundry. Do not upload images showing faces, ID documents or personal information. Only the laundry staff can see the photo, and it is deleted automatically after 10 days.",
@@ -236,7 +246,8 @@ const en: Messages = {
   "hist.wash": "Wash",
 
   "notif.title": "Get notified when your laundry is ready",
-  "notif.desc": "You will get a notification on this device when the laundry staff finishes your laundry.",
+  "notif.desc":
+    "You will get a notification on this device when the laundry staff finishes your laundry.",
   "notif.enable": "Turn on notifications",
   "notif.deniedTitle": "Notifications are off",
   "notif.denied":
@@ -246,14 +257,15 @@ const en: Messages = {
   "install.desc": "Open the app from your phone's home screen with one tap.",
   "install.button": "Add to Home Screen",
   "install.iosDesc":
-    "In Safari, tap the Share button, then choose \"Add to Home Screen\". On iPhone, notifications only work this way.",
+    'In Safari, tap the Share button, then choose "Add to Home Screen". On iPhone, notifications only work this way.',
   "install.close": "Close",
   "install.iosOtherDesc":
-    "Open your browser's Share menu and choose \"Add to Home Screen\". On iPhone, notifications only work this way (iOS 16.4 or later).",
-  "install.firefoxDesc": "Open the menu (⋮) at the top right and choose \"Install\" or \"Add to Home screen\".",
+    'Open your browser\'s Share menu and choose "Add to Home Screen". On iPhone, notifications only work this way (iOS 16.4 or later).',
+  "install.firefoxDesc":
+    'Open the menu (⋮) at the top right and choose "Install" or "Add to Home screen".',
   "install.inappTitle": "Open the site in your browser",
   "install.inappDesc":
-    "This page was opened inside another app, where adding to the home screen and notifications don't work. Choose \"Open in browser\" from the menu, or copy the link and paste it into Safari/Chrome.",
+    'This page was opened inside another app, where adding to the home screen and notifications don\'t work. Choose "Open in browser" from the menu, or copy the link and paste it into Safari/Chrome.',
   "install.copy": "Copy link",
   "install.copied": "Link copied.",
 
@@ -270,22 +282,23 @@ const en: Messages = {
   "tour.langBody": "You can change the language here at any time.",
   "tour.requestTitle": "Balance and new request",
   "tour.requestBody":
-    "Your balance is shown here; the price of each wash is deducted from it. Contact the accountant to add balance. Tap \"New wash request\" to have your laundry washed.",
+    'Your balance is shown here; the price of each wash is deducted from it. Contact the accountant to add balance. Tap "New wash request" to have your laundry washed.',
   "tour.formTitle": "Creating a request",
   "tour.formBody":
     "Choose the program, temperature and spin. Add drying and leave a note for the laundry staff if you like. Finally, take a photo of your laundry: it is required, only the laundry staff can see it, and it is deleted after 10 days.",
   "tour.notifTitle": "Notifications",
-  "tour.notifBody": "Turn on notifications to get a message on your phone when your laundry is ready.",
+  "tour.notifBody":
+    "Turn on notifications to get a message on your phone when your laundry is ready.",
   "tour.historyTitle": "My requests",
   "tour.historyBody":
-    "Follow the status of your request here: {flow}. The \"Balance history\" tab shows your top-ups and spending.",
+    'Follow the status of your request here: {flow}. The "Balance history" tab shows your top-ups and spending.',
   "tour.doneTitle": "You're all set",
   "tour.doneBody":
-    "When the status is \"{done}\", you can pick up your laundry. Tap the ? button at the top to see this tour again.",
+    'When the status is "{done}", you can pick up your laundry. Tap the ? button at the top to see this tour again.',
 };
 
 const ar: Messages = {
-  "brand": "المغسلة",
+  brand: "المغسلة",
   "role.talebe": "طالب",
   "role.camasirci": "عامل المغسلة",
   "role.muhasebeci": "المحاسب",
@@ -295,7 +308,7 @@ const ar: Messages = {
   "shell.noProfileHint": "يرجى التواصل مع المحاسب.",
   "theme.toDark": "التبديل إلى الوضع الداكن",
   "theme.toLight": "التبديل إلى الوضع الفاتح",
-  "language": "اللغة",
+  language: "اللغة",
 
   "status.bekliyor": "في الانتظار",
   "status.yikaniyor": "قيد الغسل",
@@ -341,8 +354,7 @@ const ar: Messages = {
   "form.photoChange": "تغيير",
   "form.photoRemove": "إزالة",
   "form.photoTake": "التقط صورة",
-  "form.photoHint":
-    "صوّر ملابسك فقط. يراها عامل المغسلة وتُحذف بعد 10 أيام.",
+  "form.photoHint": "صوّر ملابسك فقط. يراها عامل المغسلة وتُحذف بعد 10 أيام.",
   "form.photoReadError": "تعذّرت قراءة الصورة، جرّب صورة أخرى.",
   "form.note": "ملاحظة (اختياري)",
   "form.notePlaceholder": "اكتب ملاحظة لعامل المغسلة إن وجدت",
@@ -383,14 +395,15 @@ const ar: Messages = {
   "install.desc": "افتح التطبيق من الشاشة الرئيسية لهاتفك بلمسة واحدة.",
   "install.button": "إضافة إلى الشاشة الرئيسية",
   "install.iosDesc":
-    "في Safari اضغط زر المشاركة ثم اختر \"إضافة إلى الشاشة الرئيسية\". على iPhone لا تصل الإشعارات إلا بهذه الطريقة.",
+    'في Safari اضغط زر المشاركة ثم اختر "إضافة إلى الشاشة الرئيسية". على iPhone لا تصل الإشعارات إلا بهذه الطريقة.',
   "install.close": "إغلاق",
   "install.iosOtherDesc":
-    "افتح قائمة المشاركة في متصفحك واختر \"إضافة إلى الشاشة الرئيسية\". على iPhone لا تصل الإشعارات إلا بهذه الطريقة (iOS 16.4 أو أحدث).",
-  "install.firefoxDesc": "افتح القائمة (⋮) في الأعلى واختر \"تثبيت\" أو \"إضافة إلى الشاشة الرئيسية\".",
+    'افتح قائمة المشاركة في متصفحك واختر "إضافة إلى الشاشة الرئيسية". على iPhone لا تصل الإشعارات إلا بهذه الطريقة (iOS 16.4 أو أحدث).',
+  "install.firefoxDesc":
+    'افتح القائمة (⋮) في الأعلى واختر "تثبيت" أو "إضافة إلى الشاشة الرئيسية".',
   "install.inappTitle": "افتح الموقع في المتصفح",
   "install.inappDesc":
-    "فُتحت هذه الصفحة داخل تطبيق آخر، ولا تعمل هنا الإضافة إلى الشاشة الرئيسية ولا الإشعارات. اختر \"فتح في المتصفح\" من القائمة، أو انسخ الرابط والصقه في Safari/Chrome.",
+    'فُتحت هذه الصفحة داخل تطبيق آخر، ولا تعمل هنا الإضافة إلى الشاشة الرئيسية ولا الإشعارات. اختر "فتح في المتصفح" من القائمة، أو انسخ الرابط والصقه في Safari/Chrome.',
   "install.copy": "نسخ الرابط",
   "install.copied": "تم نسخ الرابط.",
 
@@ -407,7 +420,7 @@ const ar: Messages = {
   "tour.langBody": "يمكنك تغيير اللغة من هنا في أي وقت.",
   "tour.requestTitle": "الرصيد وطلب جديد",
   "tour.requestBody":
-    "يظهر رصيدك هنا، ويُخصم منه سعر كل غسلة. راجع المحاسب لإضافة رصيد. اضغط \"طلب غسيل جديد\" لغسل ملابسك.",
+    'يظهر رصيدك هنا، ويُخصم منه سعر كل غسلة. راجع المحاسب لإضافة رصيد. اضغط "طلب غسيل جديد" لغسل ملابسك.',
   "tour.formTitle": "إنشاء طلب",
   "tour.formBody":
     "اختر البرنامج ودرجة الحرارة وسرعة العصر. أضف التجفيف واترك ملاحظة لعامل المغسلة إن أردت. أخيرًا التقط صورة لغسيلك: الصورة إلزامية، ولا يراها إلا عامل المغسلة، وتُحذف بعد 10 أيام.",
@@ -415,10 +428,10 @@ const ar: Messages = {
   "tour.notifBody": "فعّل الإشعارات ليصلك تنبيه على هاتفك عندما يجهز غسيلك.",
   "tour.historyTitle": "طلباتي",
   "tour.historyBody":
-    "تابع حالة طلبك من هنا: {flow}. وفي تبويب \"سجل الرصيد\" ترى عمليات الشحن والإنفاق.",
+    'تابع حالة طلبك من هنا: {flow}. وفي تبويب "سجل الرصيد" ترى عمليات الشحن والإنفاق.',
   "tour.doneTitle": "كل شيء جاهز",
   "tour.doneBody":
-    "عندما تصبح الحالة \"{done}\" يمكنك استلام غسيلك. اضغط زر ? في الأعلى لمشاهدة هذه الجولة مرة أخرى.",
+    'عندما تصبح الحالة "{done}" يمكنك استلام غسيلك. اضغط زر ? في الأعلى لمشاهدة هذه الجولة مرة أخرى.',
 };
 
 export const messages: Record<Locale, Messages> = { tr, en, ar };

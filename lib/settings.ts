@@ -1,10 +1,11 @@
 "use client";
 
+import type { PricingSettings } from "@/types";
+
 import { useEffect, useState } from "react";
 import { doc, onSnapshot } from "firebase/firestore";
 
 import { db } from "@/lib/firebase";
-import type { PricingSettings } from "@/types";
 
 export const defaultPricing: PricingSettings = { washPrice: 50, dryPrice: 25 };
 
@@ -18,7 +19,9 @@ export function useSettings() {
       onSnapshot(
         doc(db, "settings", "pricing"),
         (snap) => {
-          setPricing(snap.exists() ? (snap.data() as PricingSettings) : defaultPricing);
+          setPricing(
+            snap.exists() ? (snap.data() as PricingSettings) : defaultPricing,
+          );
           setLoading(false);
         },
         () => setLoading(false),

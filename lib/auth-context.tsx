@@ -1,5 +1,7 @@
 "use client";
 
+import type { UserProfile } from "@/types";
+
 import {
   createContext,
   useContext,
@@ -17,7 +19,6 @@ import { doc, onSnapshot } from "firebase/firestore";
 
 import { unregisterPush } from "@/lib/push";
 import { auth, db } from "@/lib/firebase";
-import type { UserProfile } from "@/types";
 
 interface AuthState {
   user: User | null;

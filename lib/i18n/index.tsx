@@ -30,7 +30,10 @@ export const intlTag: Record<Locale, string> = {
 
 type Stored = { stored: Locale; setStored: (l: Locale) => void };
 
-const StoredContext = createContext<Stored>({ stored: "tr", setStored: () => {} });
+const StoredContext = createContext<Stored>({
+  stored: "tr",
+  setStored: () => {},
+});
 const ScopeContext = createContext<Locale>("tr");
 
 /** Talebenin seçtiği dili saklar. Kapsam (LocaleScope) dışındaki sayfalar Türkçe kalır. */
@@ -40,6 +43,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     try {
       const v = localStorage.getItem(STORAGE_KEY);
+
       if (isLocale(v)) setStoredState(v);
     } catch {
       // Depolama kapalıysa varsayılan dil kullanılır.
@@ -57,7 +61,9 @@ export function I18nProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo(() => ({ stored, setStored }), [stored, setStored]);
 
-  return <StoredContext.Provider value={value}>{children}</StoredContext.Provider>;
+  return (
+    <StoredContext.Provider value={value}>{children}</StoredContext.Provider>
+  );
 }
 
 /**
@@ -76,8 +82,10 @@ export function LocaleScope({
 
   useEffect(() => {
     const html = document.documentElement;
+
     html.lang = locale;
     html.dir = isRTL(locale) ? "rtl" : "ltr";
+
     return () => {
       html.lang = "tr";
       html.dir = "ltr";
@@ -98,6 +106,7 @@ export function useI18n() {
   const t = useCallback(
     (key: MessageKey, params?: Record<string, string | number>) => {
       const text = messages[locale][key] ?? messages.tr[key];
+
       return params
         ? text.replace(/\{(\w+)\}/g, (m, k: string) =>
             k in params ? String(params[k]) : m,
@@ -107,5 +116,10 @@ export function useI18n() {
     [locale],
   );
 
-  return { locale, setLocale: setStored, t, dir: isRTL(locale) ? "rtl" : "ltr" };
+  return {
+    locale,
+    setLocale: setStored,
+    t,
+    dir: isRTL(locale) ? "rtl" : "ltr",
+  };
 }

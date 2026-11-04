@@ -12,6 +12,7 @@
 	"dependencies": {
 		"@heroui/react": "3.2.6",
 		"@heroui/styles": "3.2.6",
+		"@vercel/analytics": "^2.0.1",
 		"clsx": "2.1.1",
 		"firebase": "^13.1.0",
 		"firebase-admin": "^13.10.0",

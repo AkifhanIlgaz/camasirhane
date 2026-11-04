@@ -14,9 +14,12 @@ export async function compressImage(file: File): Promise<Blob> {
     throw new Error("img.size");
   }
 
-  const bitmap = await createImageBitmap(file, { imageOrientation: "from-image" });
+  const bitmap = await createImageBitmap(file, {
+    imageOrientation: "from-image",
+  });
   const scale = Math.min(1, MAX_SIDE / Math.max(bitmap.width, bitmap.height));
   const canvas = document.createElement("canvas");
+
   canvas.width = Math.round(bitmap.width * scale);
   canvas.height = Math.round(bitmap.height * scale);
   canvas.getContext("2d")!.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
@@ -26,6 +29,7 @@ export async function compressImage(file: File): Promise<Blob> {
     const blob = await new Promise<Blob | null>((resolve) =>
       canvas.toBlob(resolve, "image/jpeg", quality),
     );
+
     if (blob && blob.size <= MAX_IMAGE_BYTES) return blob;
   }
   throw new Error("img.big");

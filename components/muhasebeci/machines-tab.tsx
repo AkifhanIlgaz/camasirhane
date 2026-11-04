@@ -1,5 +1,7 @@
 "use client";
 
+import type { Machine } from "@/types";
+
 import { type FormEvent, useEffect, useState } from "react";
 import {
   addDoc,
@@ -14,14 +16,12 @@ import {
   Card,
   Chip,
   Input,
-  Label,
   Spinner,
   TextField,
   toast,
 } from "@heroui/react";
 
 import { db } from "@/lib/firebase";
-import type { Machine } from "@/types";
 
 export function MachinesTab() {
   const [machines, setMachines] = useState<Machine[] | null>(null);

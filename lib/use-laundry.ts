@@ -1,10 +1,11 @@
 "use client";
 
+import type { Machine, WashRequest } from "@/types";
+
 import { useEffect, useState } from "react";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
 
 import { db } from "@/lib/firebase";
-import type { Machine, WashRequest } from "@/types";
 
 const time = (r: WashRequest) => r.createdAt?.toDate().getTime() ?? Infinity;
 
@@ -20,7 +21,9 @@ export function useLaundry() {
         setMachines(
           snap.docs
             .map((d) => ({ id: d.id, ...d.data() }) as Machine)
-            .sort((a, b) => a.name.localeCompare(b.name, "tr", { numeric: true })),
+            .sort((a, b) =>
+              a.name.localeCompare(b.name, "tr", { numeric: true }),
+            ),
         ),
       () => setMachines([]),
     );

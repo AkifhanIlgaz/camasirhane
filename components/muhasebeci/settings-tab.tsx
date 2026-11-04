@@ -2,14 +2,7 @@
 
 import { type FormEvent, useEffect, useState } from "react";
 import { doc, setDoc } from "firebase/firestore";
-import {
-  Button,
-  Card,
-  Input,
-  Label,
-  Spinner,
-  TextField,
-} from "@heroui/react";
+import { Button, Card, Input, Label, Spinner, TextField } from "@heroui/react";
 
 import { db } from "@/lib/firebase";
 import { useSettings } from "@/lib/settings";

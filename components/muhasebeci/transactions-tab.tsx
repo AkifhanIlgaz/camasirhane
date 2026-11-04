@@ -1,5 +1,7 @@
 "use client";
 
+import type { Transaction } from "@/types";
+
 import { useEffect, useState } from "react";
 import {
   collection,
@@ -13,7 +15,6 @@ import clsx from "clsx";
 
 import { db } from "@/lib/firebase";
 import { formatDateTime, formatMoney } from "@/lib/format";
-import type { Transaction } from "@/types";
 
 export function TransactionsTab() {
   const [items, setItems] = useState<Transaction[] | null>(null);

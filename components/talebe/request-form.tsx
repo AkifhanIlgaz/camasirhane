@@ -25,16 +25,20 @@ import {
   useOverlayState,
   type Key,
 } from "@heroui/react";
-
-import { useI18n } from "@/lib/i18n";
 import { ref, uploadBytes } from "firebase/storage";
 
+import { useI18n } from "@/lib/i18n";
 import { db, storage } from "@/lib/firebase";
 import { useAuth } from "@/lib/auth-context";
 import { useSettings } from "@/lib/settings";
 import { formatMoney } from "@/lib/format";
 import { compressImage } from "@/lib/image";
-import { DRY_PROGRAMS, SPINS, TEMPERATURES, WASH_PROGRAMS } from "@/lib/programs";
+import {
+  DRY_PROGRAMS,
+  SPINS,
+  TEMPERATURES,
+  WASH_PROGRAMS,
+} from "@/lib/programs";
 
 /** Bakiye bu kadar yıkamadan azsa "azalıyor" uyarısı gösterilir. */
 const LOW_BALANCE_WASHES = 2;
@@ -156,6 +160,7 @@ export function RequestForm() {
     try {
       const requestRef = doc(collection(db, "requests"));
       const path = `requestImages/${user.uid}/${requestRef.id}.jpg`;
+
       await uploadBytes(ref(storage, path), photo.blob, {
         contentType: "image/jpeg",
       });
@@ -262,7 +267,10 @@ export function RequestForm() {
             <form className="flex min-h-0 flex-1 flex-col" onSubmit={onSubmit}>
               <Modal.Body className="flex flex-col gap-4 p-6">
                 <OptionSelect
-                  items={WASH_PROGRAMS.map((p) => ({ id: p.id, text: p.name[locale] }))}
+                  items={WASH_PROGRAMS.map((p) => ({
+                    id: p.id,
+                    text: p.name[locale],
+                  }))}
                   label={t("form.program")}
                   value={program}
                   onChange={setProgram}
@@ -298,7 +306,9 @@ export function RequestForm() {
                     <Switch.Control>
                       <Switch.Thumb />
                     </Switch.Control>
-                    {t("form.dry", { price: formatMoney(pricing.dryPrice, locale) })}
+                    {t("form.dry", {
+                      price: formatMoney(pricing.dryPrice, locale),
+                    })}
                   </Switch.Content>
                 </Switch>
                 {dry && (
@@ -323,17 +333,22 @@ export function RequestForm() {
                     type="file"
                     onChange={async (e) => {
                       const file = e.target.files?.[0];
+
                       e.target.value = "";
                       if (!file) return;
                       try {
                         const blob = await compressImage(file);
+
                         if (photo) URL.revokeObjectURL(photo.url);
                         setPhoto({ blob, url: URL.createObjectURL(blob) });
                         setError(null);
                       } catch (err) {
                         const code = err instanceof Error ? err.message : "";
+
                         setError(
-                          code === "img.type" || code === "img.size" || code === "img.big"
+                          code === "img.type" ||
+                            code === "img.size" ||
+                            code === "img.big"
                             ? t(code)
                             : t("form.photoReadError"),
                         );
@@ -386,7 +401,9 @@ export function RequestForm() {
                         <path d="M4 8a2 2 0 0 1 2-2h1.5l1-1.5h7l1 1.5H18a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z" />
                         <circle cx="12" cy="12.5" r="3.5" />
                       </svg>
-                      <span className="text-sm font-medium">{t("form.photoTake")}</span>
+                      <span className="text-sm font-medium">
+                        {t("form.photoTake")}
+                      </span>
                       <span className="text-xs font-medium text-danger">
                         {t("form.photoHint")}
                       </span>
@@ -394,12 +411,14 @@ export function RequestForm() {
                   )}
                 </div>
 
-                <TextField fullWidth maxLength={NOTE_MAX} value={note} onChange={setNote}>
+                <TextField
+                  fullWidth
+                  maxLength={NOTE_MAX}
+                  value={note}
+                  onChange={setNote}
+                >
                   <Label>{t("form.note")}</Label>
-                  <TextArea
-                    placeholder={t("form.notePlaceholder")}
-                    rows={3}
-                  />
+                  <TextArea placeholder={t("form.notePlaceholder")} rows={3} />
                   <span className="text-xs text-muted tabular-nums">
                     {note.length}/{NOTE_MAX}
                   </span>
